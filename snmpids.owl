@@ -1,0 +1,344 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#"
+     xml:base="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+    <owl:Ontology rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#canLogin -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#canLogin">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#InverseFunctionalProperty"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Administrator"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#NetworkManagementSystem"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#executes -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#executes">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#User"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Process"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#hasProfile -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#hasProfile">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Agent"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#SnmpProfile"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#isLoggedOn -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#isLoggedOn">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#User"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Agent"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#isaParfOf -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#isaParfOf">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Process"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Software"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#runsOn -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#runsOn">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Process"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Agent"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#authenticationPassphrase -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#authenticationPassphrase">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#v3Profile"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#authenticationType -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#authenticationType">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#v3Profile"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#cpuUsage -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#cpuUsage">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Agent"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#deviceName -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#deviceName">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Agent"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#encryptionPassphrase -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#encryptionPassphrase">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#v3Profile"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#encryptionType -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#encryptionType">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#v3Profile"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#macAddress -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#macAddress">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Agent"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#memoryUsage -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#memoryUsage">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Agent"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#processID -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#processID">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Process"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#publicName -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#publicName">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#v2cProfile"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#runDirectory -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#runDirectory">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Process"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#securityLevel -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#securityLevel">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#v3Profile"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#securityName -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#securityName">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#v3Profile"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#type -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#type">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Malware"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#username -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#username">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#User"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Administrator -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Administrator">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#User"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Agent -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Agent"/>
+    
+
+
+    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#DatabaseServer -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#DatabaseServer">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Agent"/>
+        <owl:disjointWith rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#NetworkManagementSystem"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Malware -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Malware">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Software"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#NetworkManagementSystem -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#NetworkManagementSystem">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Agent"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Process -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Process"/>
+    
+
+
+    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#SnmpProfile -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#SnmpProfile"/>
+    
+
+
+    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Software -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Software"/>
+    
+
+
+    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#User -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#User"/>
+    
+
+
+    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#v1Profile -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#v1Profile">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#SnmpProfile"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#v2cProfile -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#v2cProfile">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#SnmpProfile"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#v3Profile -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#v3Profile">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#SnmpProfile"/>
+    </owl:Class>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // General axioms
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
+        <owl:members rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#v1Profile"/>
+            <rdf:Description rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#v2cProfile"/>
+            <rdf:Description rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#v3Profile"/>
+        </owl:members>
+    </rdf:Description>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 4.2.8.20170104-2310) https://github.com/owlcs/owlapi -->
+
