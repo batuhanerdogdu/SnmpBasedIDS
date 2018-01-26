@@ -1,8 +1,16 @@
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class MemoryStatistics {
     /*****************************************************************
      * get memory statistics for IDS
      all values are in kilobytes
     ******************************************************************/
+
+    public HashMap<String,String> getAllMemoryStatistics () { //1.3.6.1.4.1.2021.4
+        HashMap<String, String> allMemoryStatistics = new HashMap<String, String>();
+        return allMemoryStatistics;
+    }
 
     public int getTotalSwapSize () { //1.3.6.1.4.1.2021.4.3.0
         int totalSwapSize = 0;

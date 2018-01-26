@@ -1,3 +1,5 @@
+import java.util.HashMap;
+
 public class DiskStatistics {
     /**********************************************************************************
      * gets disk statistics for IDS
@@ -5,6 +7,11 @@ public class DiskStatistics {
      disk / 100000
      all integer values are in kilobytes except percentages
      **********************************************************************************/
+
+    public HashMap getAllDiskStatistics () {
+        HashMap<String, String> allDiskStatistics= new HashMap<String,String >();
+        return allDiskStatistics;
+    }
     public String getPathWhereDiskIsMounted () { //1.3.6.1.4.1.2021.9.1.2.1
         String pathWhereDiskIsMounted = new String ();
         return pathWhereDiskIsMounted;

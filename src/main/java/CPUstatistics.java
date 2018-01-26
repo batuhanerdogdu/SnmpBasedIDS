@@ -1,8 +1,22 @@
+import com.sun.org.apache.xerces.internal.impl.xpath.XPath;
+
+import java.util.HashMap;
+
 public class CPUstatistics {
 
     /***********************************************************
      gets CPU statistics for IDS
      */
+
+    public HashMap<String, String> getAllCPUstatistics () { // 1.3.6.1.4.1.2021.11
+        HashMap<String,String > allCPUstatistics = new HashMap<String, String>();
+        return allCPUstatistics;
+    }
+
+    public HashMap<String ,String> getAllLoadInformation () { //1.3.6.1.4.1.2021.10
+        HashMap<String,String> allLoadInformation= new HashMap<String ,String>();
+        return allLoadInformation;
+    }
     public String get1MinuteLoad () { //1.3.6.1.4.1.2021.10.1.3.1
         String oneMinuteLoad = new String();
         return oneMinuteLoad;
