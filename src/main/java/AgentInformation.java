@@ -20,7 +20,7 @@ public class AgentInformation {
 
     public static void main (String args[]) throws IOException {
         ArrayList<String> sysUpTime = new ArrayList<String>();
-        AgentInformation ainf = new AgentInformation("192.168.1.41");
+        AgentInformation ainf = new AgentInformation("127.0.0.1");
 
         System.out.println("Please first enter the localhost IP address (e.g. 127.0.0.1 for most situations)");
         //Scanner sc = new Scanner(System.in);
