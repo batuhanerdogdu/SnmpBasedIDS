@@ -20,6 +20,7 @@ import java.util.UUID;
 
 public class OntologyConnection {
     private static final Logger LOGGER = LogManager.getLogger(OntologyConnection.class);
+
     public static void uploadRDF(File rdf, String serviceURI)
             throws IOException {
 
@@ -70,11 +71,11 @@ public class OntologyConnection {
     public static void main(String argv[]) throws IOException {
         // uploadRDF(new File("test.rdf"), );
 
-        uploadRDF(new File("/home/b/Documents/snmpids.owl"), "http://localhost:3030/ds/data");
+        uploadRDF(new File("/home/batu/IdeaProjects/SnmpBasedIDS/snmpids.owl"), "http://localhost:3030/ds/data");
         execSelectAndPrint("http://localhost:3030/ds/sparql",
                 "PREFIX snmp: <http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#>" +
                         "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>"+
-                "SELECT ?object WHERE {snmp:runsOn rdf:domain ?object}");
+                "SELECT ?object WHERE {?s ?p ?object}");
 
 
     }

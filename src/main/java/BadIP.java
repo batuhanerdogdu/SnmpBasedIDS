@@ -1,4 +1,5 @@
-public class BadIP {
+public class BadIP { //https://www.badips.com/get/list/ssh/3?age=1w
+                    //https://www.malwaredomainlist.com/mdl.php?search=&colsearch=All&quantity=All
 
     private String dateOfDiscovery;
     private String domainName;

@@ -10,20 +10,23 @@ import java.util.HashMap;
 public class HTMLparser  {
 
     public static void main (String args[]) throws IOException, InterruptedException {
-        String website1 = "https://www.malwaredomainlist.com/mdl.php?search=&colsearch=All&quantity=All";
+        //parse symantecs website: https://www.symantec.com/security_response/landing/azlisting.jsp
+        //parse mcafee's website: https://www.mcafee.com/threat-intelligence/malware/latest.aspx?region=us
+        //bad ips: https://www.badips.com/get/list/ssh/3?age=1w
         HTMLparser htmlParser = new HTMLparser();
-        htmlParser.getHTMLcontent(website1);
+        //htmlParser.getHTMLcontentOfMalwareDomainListCom();
+        htmlParser.getHMTLcontentOfSymantecCom();
     }
 
     //url is the html file's url, part is the required html part (e.g <br>)
-    public ArrayList<BadIP> getHTMLcontent(String url) throws IOException {
-        //"https://www.malwaredomainlist.com/mdl.php"
+    public ArrayList<BadIP> getHTMLcontentOfMalwareDomainListCom() throws IOException {
+        String url = "https://www.malwaredomainlist.com/mdl.php";
         ArrayList<BadIP> badIPs = new ArrayList<BadIP>();
         Document document = Jsoup.connect(url).timeout(10*10000).get();
         Elements elements = document.getElementsByTag("tbody");
         Elements rows = elements.select("tr");
         //System.out.println(rows);
-        try {
+        try {//website responses late so we make the program wait...
             Thread.sleep(8000);
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -65,6 +68,45 @@ public class HTMLparser  {
             }
         }
         return badIPs;
+    }
+
+    public String[] getHTMLcontentOfBadIpCom () throws IOException {
+        String url = "https://www.badips.com/get/list/ssh/3?age=1w";
+        Document document = Jsoup.connect(url).timeout(10*10000).get();
+        Elements elements = document.getElementsByTag("html");
+
+        try {
+            Thread.sleep(8000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        String[] badIps = elements.text().split("(?<= ).\\S+");
+
+        System.out.println("1st ip address: "+ badIps[0]);
+        return badIps;
+    }
+
+    public ArrayList<Malware> getHMTLcontentOfSymantecCom () throws IOException {
+        String url = "https://www.mcafee.com/threat-intelligence/malware/latest.aspx?region=us";
+        String url2 ="https://www.symantec.com/security_response/landing/azlisting.jsp";
+        Document document = Jsoup.connect(url2).timeout(10*10000).get();
+        Elements elements = document.select("tbody");
+
+        Elements rows =  elements.select("tr");
+        /*try{
+            Thread.sleep(8000);
+        } catch (InterruptedException e){
+            e.printStackTrace();
+        }*/
+        //System.out.println(elements);
+        ArrayList<Malware> malwares = new ArrayList<Malware>();
+        for (Element row : rows){
+            Elements columns = row.getElementsByTag("td");
+            for (Element column : columns) {
+                System.out.println (column.text());
+            }
+        }
+        return malwares;
     }
 
 
