@@ -23,8 +23,10 @@ public class OntologyConnection {
     private static final Logger LOGGER = LogManager.getLogger(OntologyConnection.class);
     final String inputFileName = getWorkingDirectory()+"/snmpbasedids.owl";
     final static String nameSpace = "http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#";
+    OntModel model = null;
 
     public OntologyConnection() throws IOException {
+
     }
 
     public static void uploadRDF(File rdf, String serviceURI)
@@ -86,7 +88,7 @@ public class OntologyConnection {
         return line;
     }
 
-    public Model loadLocalOntology () throws IOException {
+    public OntModel loadLocalOntology () throws IOException {
         //add instances to local ontology and then (another function->public void) shoot ontology to the fuseki server
 
         OntModel model = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM, null); //initialize without reasoner
@@ -177,20 +179,41 @@ public class OntologyConnection {
         return model;
     }
 
-    public void addIndividualsToLocalOntology (OntModel model, OntClass ontClass, ArrayList<String> properties,
-                                               OntProperty objectProperty, OntProperty dataProperty,
-                                               ArrayList<String> individuals) throws FileNotFoundException {
+    public void addPropertiesOfAnIndividualToLocalOntology (Individual individual, OntProperty objectProperty, OntProperty dataProperty,
+                                              ArrayList<String> properties) throws IOException {
         FileOutputStream modelToWrite = new FileOutputStream(inputFileName);
-        for (int i=0; i < individuals.size() ; i++){
-            Individual instance = model.createIndividual(nameSpace + individuals.get(i), ontClass);
-            if (objectProperty != null){
-                instance.addProperty(objectProperty, properties.get(i));
+        if (objectProperty != null){
+            for (int i=0; i < properties.size() ; i++){
+                individual.addProperty(objectProperty, properties.get(i));
             }
         }
+        if (dataProperty != null) {
+            for (int i=0 ; i < properties.size() ; i++){
+                individual.addProperty(dataProperty, properties.get(i));
+            }
+        }
+        model.write(modelToWrite, "RDF/XML");
+        modelToWrite.flush();
+    }
+
+    public void addIndividualsToLocalOntology (OntClass ontClass, ArrayList<String> individuals) throws IOException {
+        FileOutputStream modelToWrite = new FileOutputStream(inputFileName);
+        for (String individual : individuals){
+            Individual instance = model.createIndividual(nameSpace + individual, ontClass);
+        }
+        model.write(modelToWrite, "RDF/XML");
+        modelToWrite.flush();
+    }
+
+    public void addIndividualsToOntologyOnFusekiServer () {
+        //INSERT or UPDATE
+    }
+
+    public void deleteIndividuals () {
+
     }
 
     public static void main(String argv[]) throws IOException {
-        // uploadRDF(new File("test.rdf"), );
 
         /*uploadRDF(new File("/home/batu/IdeaProjects/SnmpBasedIDS/snmpids.owl"), "http://localhost:3030/ds/data");
         execSelectAndPrint("http://localhost:3030/ds/sparql",

@@ -12,6 +12,7 @@ public class Controller {
     public Controller() throws IOException {
     }
     final static String password = "password";
+    final static String nameSpace = "http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#";
     HTMLparser htmlParser = new HTMLparser();
     OntologyConnection ontologyConnection = new OntologyConnection();
 
@@ -68,10 +69,15 @@ public class Controller {
         while (!answer.equals("Q")){
             ipAddresses.add(answer);
         }
-        ArrayList<Agent> agents = new ArrayList<Agent>();
+        OntModel model = ontologyConnection.loadLocalOntology();
+        OntClass agent = model.getOntClass(nameSpace + "Agent");
+        ArrayList<String> agents = new ArrayList<String>();
         for (String ipAddress : ipAddresses){
-            Agent agent = new Agent(ipAddress);
+            String s = new String();
+            agents.add(s);
         }
+        ontologyConnection.addIndividualsToLocalOntology(agent, agents);
+
         System.out.println("IP addresses are successfully added!");
         System.out.println("Are all devices belongs to those IP addresses configured for Network Management System? Y/N");
         String answer1 = sc.nextLine();
@@ -88,8 +94,6 @@ public class Controller {
                 System.out.println("Too many faulty attempts. Exiting system...");
             }
         }
-        OntModel model = ontologyConnection.loadLocalOntology();
-        OntClass agent = ontologyConnection.getInternetDomain();
-        System.out.println(agent);
+
     }
 }
