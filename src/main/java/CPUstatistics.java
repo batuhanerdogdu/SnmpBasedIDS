@@ -66,11 +66,11 @@ public class CPUstatistics extends Statistics {
         return rawUserCPUtime;
     }
 
-    public int getPercentagesOfSystemCPUtime () throws IOException { //1.3.6.1.4.1.2021.11.10.0
+    public int getPercentageOfSystemCPUtime () throws IOException { //1.3.6.1.4.1.2021.11.10.0
         String snmpCommand = "1.3.6.1.4.1.2021.11.10";
         String regexPattern = "(?<=: ).+";
-        int percentagesOfSystemCPUtime = Integer.parseInt(runSnmpCommand(snmpCommand, regexPattern, ipAddress).get(0));
-        return percentagesOfSystemCPUtime;
+        int percentageOfSystemCPUtime = Integer.parseInt(runSnmpCommand(snmpCommand, regexPattern, ipAddress).get(0));
+        return percentageOfSystemCPUtime;
     }
 
     public int getRawSystemCPUtime () throws IOException { //1.3.6.1.4.1.2021.11.52.0
@@ -80,11 +80,11 @@ public class CPUstatistics extends Statistics {
         return rawSystemCPUtime;
     }
 
-    public int getPercentagesOfIdleCPUtime () throws IOException { //1.3.6.1.4.1.2021.11.11.0
+    public int getPercentageOfIdleCPUtime () throws IOException { //1.3.6.1.4.1.2021.11.11.0
         String snmpCommand = "1.3.6.1.4.1.2021.11.11";
         String regexPattern = "(?<=: ).+";
-        int percentagesOfIdleCPUtime = Integer.parseInt(runSnmpCommand(snmpCommand, regexPattern, ipAddress).get(0));
-        return percentagesOfIdleCPUtime;
+        int percentageOfIdleCPUtime = Integer.parseInt(runSnmpCommand(snmpCommand, regexPattern, ipAddress).get(0));
+        return percentageOfIdleCPUtime;
     }
 
     public int getRawIdleCPUtime () throws IOException { //1.3.6.1.4.1.2021.11.53.0

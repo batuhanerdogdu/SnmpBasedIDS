@@ -33,7 +33,7 @@ public class HTMLparser  {
         }
 
         rows.remove(0);
-        rows.remove(1);
+        rows.remove(1); //first two rows are not necessary
 
         for (Element row : rows){
 
@@ -70,41 +70,45 @@ public class HTMLparser  {
         return badIPs;
     }
 
-    public String[] getHTMLcontentOfBadIpCom () throws IOException {
+    public ArrayList<String> getHTMLcontentOfBadIpCom () throws IOException {
         String url = "https://www.badips.com/get/list/ssh/3?age=1w";
         Document document = Jsoup.connect(url).timeout(10*10000).get();
         Elements elements = document.getElementsByTag("html");
 
-        try {
+        /*try {
             Thread.sleep(8000);
         } catch (InterruptedException e) {
             e.printStackTrace();
-        }
-        String[] badIps = elements.text().split("(?<= ).\\S+");
+        }*/
+        String[] temp = elements.text().split("(?<= ).\\S+");
+        ArrayList<String> badIps = new ArrayList<String>();
 
-        System.out.println("1st ip address: "+ badIps[0]);
+        for (int i=0 ; i < temp.length ; i++) { //map string array to arraylist
+            badIps.add(temp[i]);
+        }
+
+        System.out.println("1st ip address: "+ badIps.get(0));
         return badIps;
     }
 
     public ArrayList<Malware> getHMTLcontentOfSymantecCom () throws IOException {
-        String url = "https://www.mcafee.com/threat-intelligence/malware/latest.aspx?region=us";
+        String url = "https://www.mcafee.com/threat-intelligence/malware/latest.aspx?region=us"; //this website wont allow to parse contents
         String url2 ="https://www.symantec.com/security_response/landing/azlisting.jsp";
         Document document = Jsoup.connect(url2).timeout(10*10000).get();
         Elements elements = document.select("tbody");
-
         Elements rows =  elements.select("tr");
-        /*try{
-            Thread.sleep(8000);
-        } catch (InterruptedException e){
-            e.printStackTrace();
-        }*/
-        //System.out.println(elements);
         ArrayList<Malware> malwares = new ArrayList<Malware>();
+
         for (Element row : rows){
             Elements columns = row.getElementsByTag("td");
+            ArrayList<String> temp = new ArrayList<String>();
+            Malware m = new Malware();
             for (Element column : columns) {
+                temp.add(column.text());
                 System.out.println (column.text());
             }
+            m.setName(temp.get(0));
+            m.setType(temp.get(1));
         }
         return malwares;
     }

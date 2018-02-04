@@ -11,9 +11,12 @@ public class Agent {
     }
 
     public String getIpAddress() {
+
         return ipAddress;
     }
+
     public static void main (String[] args) throws IOException {
+        //get ip addresses from terminal for now
         Agent agent = new Agent("127.0.0.1");
         agent.getInformation();
     }
@@ -21,7 +24,7 @@ public class Agent {
     public void getInformation () throws IOException {
         SystemInformation systemInformation = new SystemInformation(ipAddress);
         MemoryStatistics memoryStatistics = new MemoryStatistics(ipAddress);
-        CPUstatistics cpUstatistics = new CPUstatistics(ipAddress);
+        CPUstatistics cpuStatistics = new CPUstatistics(ipAddress);
         DiskStatistics diskStatistics = new DiskStatistics(ipAddress);
         ProcessStatistics processStatistics = new ProcessStatistics(ipAddress);
         String name = systemInformation.getSystemName();
@@ -29,7 +32,7 @@ public class Agent {
         System.out.println("System name: " + systemInformation.getSystemDescription());
         System.out.println("System up time: " + systemInformation.getSystemUpTime());
         System.out.println("Memory Statistics: "+ memoryStatistics.getAllMemoryStatistics());
-        System.out.println("CPU Statistics" + cpUstatistics.get1MinuteLoad());
+        System.out.println("CPU Statistics" + cpuStatistics.get1MinuteLoad());
 
 
     }

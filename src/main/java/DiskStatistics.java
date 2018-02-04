@@ -74,26 +74,26 @@ public class DiskStatistics extends Statistics {
         return usedSpaceOnTheDisk; //1st element is the current os' value
     }
 
-    public ArrayList<Integer> getPercentageOfSpaceUsedOnDisk () throws IOException { //1.3.6.1.4.1.2021.9.1.9
-        ArrayList<Integer> percentageOfSpaceUsedOnDisk =  new ArrayList<Integer>();
+    public ArrayList<Integer> getPercentagesOfSpaceUsedOnDisk () throws IOException { //1.3.6.1.4.1.2021.9.1.9
+        ArrayList<Integer> percentagesOfSpaceUsedOnDisk =  new ArrayList<Integer>();
         String snmpCommand = "1.3.6.1.4.1.2021.9.1.9";
         String regexPattern = "(?<=: ).+";
         ArrayList<String> temp = runSnmpCommand(snmpCommand, regexPattern, ipAddress);
         for (int i=0 ; i < temp.size() ; i++){
-            percentageOfSpaceUsedOnDisk.add(Integer.parseInt(temp.get(i)));
+            percentagesOfSpaceUsedOnDisk.add(Integer.parseInt(temp.get(i)));
         }
-        return percentageOfSpaceUsedOnDisk; //1st element is the current os' value
+        return percentagesOfSpaceUsedOnDisk; //1st element is the current os' value
     }
 
     public ArrayList<Integer> getPercentageOfInodesOnDisk () throws IOException { //1.3.6.1.4.1.2021.9.1.10
-        ArrayList<Integer> percentageOfInodesOnDisk = new ArrayList<Integer>();
+        ArrayList<Integer> percentagesOfInodesOnDisk = new ArrayList<Integer>();
         String snmpCommand = "1.3.6.1.4.1.2021.9.1.10";
         String regexPattern = "(?<=: ).+";
         ArrayList <String> temp = runSnmpCommand(snmpCommand, regexPattern, ipAddress);
         for (int i=0 ; i <  temp.size(); i++){
-            percentageOfInodesOnDisk.add(Integer.parseInt(temp.get(i)));
+            percentagesOfInodesOnDisk.add(Integer.parseInt(temp.get(i)));
         }
-        return percentageOfInodesOnDisk; //1st element is the current os' value
+        return percentagesOfInodesOnDisk; //1st element is the current os' value
     }
 
 }
