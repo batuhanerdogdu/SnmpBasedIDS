@@ -1,5 +1,9 @@
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class SystemInformation extends Statistics {
 
@@ -27,5 +31,25 @@ public class SystemInformation extends Statistics {
         String regexPattern = "(?<=: ).+";
         String systemName = runSnmpCommand(snmpCommand, regexPattern, ipAddress).get(0);
         return systemName;
+    }
+
+    public String getMacAddress () throws IOException {
+        String macAddress =  new String();
+        String command = "ifconfig";
+        String regexPattern = "(?<=HWaddr ).+\\S";
+        String[] args = new String[] {"/bin/bash", "-c", command};
+        Process proc = new ProcessBuilder(args).start();
+        BufferedReader r = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+        Pattern pattern = Pattern.compile(regexPattern); //"/([A-z])+\\w(?=\")/g"  \S+(?=\")(?<=\")
+        String line;
+
+        while ((line = r.readLine()) != null ) {
+            Matcher matcher = pattern.matcher(line);
+            while (matcher.find()) {
+                //System.out.println(matcher.group().substring(0,matcher.group().length()));
+                macAddress = (matcher.group().substring(0, matcher.group().length())).replace(' ', '_');
+            }
+        }
+        return macAddress;
     }
 }
