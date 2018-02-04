@@ -177,14 +177,14 @@ public class OntologyConnection {
         return model;
     }
 
-    public void addIndividualsToLocalOntology (OntModel model, OntClass ontClassDomain, OntClass ontClassRange,
+    public void addIndividualsToLocalOntology (OntModel model, OntClass ontClass, ArrayList<String> properties,
                                                OntProperty objectProperty, OntProperty dataProperty,
                                                ArrayList<String> individuals) throws FileNotFoundException {
         FileOutputStream modelToWrite = new FileOutputStream(inputFileName);
-        for (String individual : individuals){
-            Individual instance = model.createIndividual(nameSpace + individual, ontClassDomain);
+        for (int i=0; i < individuals.size() ; i++){
+            Individual instance = model.createIndividual(nameSpace + individuals.get(i), ontClass);
             if (objectProperty != null){
-                instance.addProperty(objectProperty, ontClassRange);
+                instance.addProperty(objectProperty, properties.get(i));
             }
         }
     }
