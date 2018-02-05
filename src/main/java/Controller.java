@@ -68,15 +68,16 @@ public class Controller {
         String answer = sc.nextLine();
         while (!answer.equals("Q")){
             ipAddresses.add(answer);
+            answer = sc.nextLine();
         }
-        OntModel model = ontologyConnection.loadLocalOntology();
-        OntClass agent = model.getOntClass(nameSpace + "Agent");
+       // OntModel model = ontologyConnection.loadLocalOntology();
+       // OntClass agent = model.getOntClass(nameSpace + "Agent");
         ArrayList<String> agents = new ArrayList<String>();
         for (String ipAddress : ipAddresses){
             String s = new String();
             agents.add(s);
         }
-        ontologyConnection.addIndividualsToLocalOntology(agent, agents);
+        //ontologyConnection.addIndividualsToLocalOntology(model, agent, agents);
 
         System.out.println("IP addresses are successfully added!");
         System.out.println("Are all devices belongs to those IP addresses configured for Network Management System? Y/N");
