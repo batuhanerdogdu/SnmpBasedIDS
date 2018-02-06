@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ProcessStatistics extends Statistics{
     private String ipAddress;
@@ -15,11 +16,19 @@ public class ProcessStatistics extends Statistics{
         return allProcessStatistics;
     }
 
-    public ArrayList<String> getProcessNames () throws IOException { //1.3.6.1.2.1.25.4.2.1.2
+    public HashMap<String, String> getProcessNames () throws IOException { //1.3.6.1.2.1.25.4.2.1.2
+        HashMap<String, String> processes = new HashMap<String, String>();
         String snmpCommand = "1.3.6.1.2.1.25.4.2.1.2";
         String regexPattern = "(?<=: ).+";
+        String regexPatternForId = "(?<!Name)\\d+(?= )";
         ArrayList<String> processNames = runSnmpCommand(snmpCommand, regexPattern, ipAddress);
-        return  processNames;
+        ArrayList<String> processIds = runSnmpCommand(snmpCommand , regexPatternForId, ipAddress);
+        for (int i=0 ; i < processIds.size(); i++){
+            processes.put(processIds.get(i), processNames.get(i));
+        }
+        for (String name : processNames)
+            System.out.println(name);
+        return  processes;
     }
 
     public ArrayList<String> getProcessRunDirectories () throws IOException{ // 1.3.6.1.2.1.25.4.2.1.4

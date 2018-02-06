@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,9 +26,14 @@ public class OntologyConnection {
     final static String prefixSNMP = "PREFIX snmp: <http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#>";
     final static String prefixRDF = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>";
     final static String prefixRDFS = "PREFIX rdfs: <http://w3.org/2000/01/rdf-schema#>";
-    final static String prefixOWL = "http://www.w3.org/2002/07/owl#";
-    final static String prefixXML = "http://www.w3.org/XML/1998/namespace";
-    final static String prefixXSD = "http://www.w3.org/2001/XMLSchema#";
+    final static String prefixOWL = "PREFIX owl: <http://www.w3.org/2002/07/owl#>";
+    final static String prefixXML = "PREFIX xml: <http://www.w3.org/XML/1998/namespace>";
+    final static String prefixXSD = "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>";
+    final static String rdfType = "rdf:type";
+    final static String rdfsDomain = "rdfs:domain";
+    final static String rdfsRange = "rdfs:range";
+    final static String owlClass = "owl:class";
+
 
 
     public OntologyConnection() throws IOException {
@@ -66,40 +72,87 @@ public class OntologyConnection {
         // write to a ByteArrayOutputStream
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         //convert to JSON format
-        ResultSetFormatter.outputAsJSON(outputStream, results);
+        //ResultSetFormatter.outputAsJSON(outputStream, results);
+        ResultSetFormatter.outputAsCSV(outputStream, results);
         //turn json to string
-        String json = new String(outputStream.toByteArray());
+        String json = new String(outputStream.toString());
         //print json string
         System.out.println(json);
 
     }
 
-    public static void execSelectAndProcess(String serviceURI, String query) {
-        QueryExecution q = QueryExecutionFactory.sparqlService(serviceURI,
+    public static void execSelectAndProcess(String query) {
+        QueryExecution q = QueryExecutionFactory.sparqlService(serviceURIforSelect,
                 query);
         ResultSet results = q.execSelect();
 
         while (results.hasNext()) {
             QuerySolution soln = results.nextSolution();
             // assumes that you have an "?x" in your query
-            RDFNode x = soln.get("x");
+            RDFNode x = soln.get("s");
             System.out.println(x);
         }
     }
 
     public static void insertIndividuals (ArrayList<String> instances, String className) {
-        UpdateRequest update = UpdateFactory.create(prefixSNMP + " " + prefixRDF + " " + prefixRDFS + " "+
+        String queryBeginning = prefixSNMP + " " + prefixRDF + " " + prefixRDFS + " "+
                 prefixOWL + " " + prefixXML + " " + prefixXSD +" " + "\n" + "INSERT DATA " +
-                " { "+ "<"+ nameSpace+instances.get(0)+">"+" rdf:type "+ "snmp:"+className +".}");
+                " { ";
+        String queryMid = new String();
+        String queryEnding = "}";
+        for (String instance : instances ){
+            queryMid+= "<" + nameSpace+instance + "> " + rdfType+ " snmp:" + className + ".\n";
+        }
+        System.out.println(queryBeginning+ queryMid+ queryEnding);
+        UpdateRequest update = UpdateFactory.create(queryBeginning + queryMid + queryEnding);
         UpdateProcessor processor = UpdateExecutionFactory.createRemote(update,
                 serviceURIforUpdate);
         processor.execute();
     }
 
     public static void deleteIndividuals (ArrayList<String> instances, String className){
-        UpdateRequest update = UpdateFactory.create(prefixSNMP + " " + prefixRDF + " " + prefixRDFS + " "+
+
+        String queryBeginning = prefixSNMP + " " + prefixRDF + " " + prefixRDFS + " "+
                 prefixOWL + " " + prefixXML + " " + prefixXSD +" " + "\n" + "DELETE DATA " +
-                " { "+ "<"+ nameSpace+instances.get(0)+">"+" rdf:type "+ "snmp:"+className +".}");
+                " { ";
+        String queryMid = new String();
+        String queryEnding = "}";
+        for (String instance : instances ){
+            queryMid+= "<" + nameSpace + instance + "> " + rdfType + " snmp:" + className + ".\n";
+        }
+        UpdateRequest update = UpdateFactory.create(queryBeginning + queryMid + queryEnding);
+        UpdateProcessor processor = UpdateExecutionFactory.createRemote(update,
+                serviceURIforUpdate);
+        processor.execute();
+    }
+
+    public static void insertDataProperties (String instanceName, String propertyName, ArrayList<String> properties){
+        String queryBeginning = prefixSNMP + " " + prefixRDF + " " + prefixRDFS + " "+
+                prefixOWL + " " + prefixXML + " " + prefixXSD +" " + "\n" + "INSERT DATA " +
+                " { ";
+        String queryMid = new String();
+        String queryEnding = "}";
+        for (String property : properties){
+            queryMid += "<"+nameSpace + instanceName + "> " + "<"+ nameSpace + propertyName + "> " +
+                    "\""+ property + "\"" + ".\n";
+        }
+        UpdateRequest update = UpdateFactory.create(queryBeginning + queryMid + queryEnding);
+        UpdateProcessor processor = UpdateExecutionFactory.createRemote(update,
+                serviceURIforUpdate);
+        processor.execute();
+    }
+
+    public static void deleteDataProperties (String instanceName, String propertyName, ArrayList<String> properties){
+        String queryBeginning = prefixSNMP + " " + prefixRDF + " " + prefixRDFS + " "+
+                prefixOWL + " " + prefixXML + " " + prefixXSD +" " + "\n" + "DELETE DATA " +
+                " { ";
+        String queryMid = new String();
+        String queryEnding = "}";
+        for (String property : properties){
+            queryMid += "<"+nameSpace + instanceName + "> " + "<"+ nameSpace + propertyName + "> " +
+                    "\""+ property + "\"" + ".\n";
+        }
+        UpdateRequest update = UpdateFactory.create(queryBeginning + queryMid + queryEnding);
         UpdateProcessor processor = UpdateExecutionFactory.createRemote(update,
                 serviceURIforUpdate);
         processor.execute();
@@ -119,36 +172,29 @@ public class OntologyConnection {
         return result;
     }
 
-    public void deleteIndividuals () {
-
-    }
 
     public static void main(String argv[]) throws IOException {
         OntologyConnection oc = new OntologyConnection();
         HTMLparser htmLparser = new HTMLparser();
         ProcessStatistics ps = new ProcessStatistics("127.0.0.1");
-        ArrayList<String> badIPs = htmLparser.getHTMLcontentOfBadIpCom();
-        ArrayList<Malware> malwaresOfSymantec = htmLparser.getHMTLcontentOfSymantecCom();
-        ArrayList<BadIP> badIPsOfDomainList = htmLparser.getHTMLcontentOfMalwareDomainListCom();
-        ArrayList<String> processNames = ps.getProcessNames();
-        ArrayList<String> processDirs = ps.getProcessRunDirectories();
+        //ArrayList<String> badIPs = htmLparser.getHTMLcontentOfBadIpCom();
+        //ArrayList<Malware> malwaresOfSymantec = htmLparser.getHMTLcontentOfSymantecCom();
+        //ArrayList<BadIP> badIPsOfDomainList = htmLparser.getHTMLcontentOfMalwareDomainListCom();
+        HashMap<String, String> processes = ps.getProcessNames();
+        //ArrayList<String> processDirs = ps.getProcessRunDirectories();
 
 
-        uploadRDF(new File("/home/batu/IdeaProjects/SnmpBasedIDS/snmpids.owl"),
+        uploadRDF(new File(oc.getWorkingDirectory()+"snmpids.owl"),
                 serviceURIforData);
         ArrayList<String> n = new ArrayList<String>();
+        n.add("2.2.2.2");
         n.add("1.1.1.1");
+        n.add("127.0.0.1");
+        n.add("0.0.0.0");
         insertIndividuals(n, "Agent");
-        execSelectAndPrint(prefixSNMP+ prefixRDF+
+        execSelectAndProcess(prefixSNMP + prefixRDF + "SELECT ?s WHERE {?s rdf:type snmp:Agent}");
+        deleteIndividuals(n, "Agent");
+        execSelectAndProcess(prefixSNMP + prefixRDF +
                 "SELECT ?s WHERE {?s rdf:type snmp:Agent}");
-
-        /*prefix rdfs: <http://w3.org/2000/01/rdf-schema#>
-prefix snmp: <http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#>
-prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-insert data
-{graph <http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP>
-{<http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#127.0.0.1> rdf:type snmp:Agent.}}*/
-
-
     }
 }
