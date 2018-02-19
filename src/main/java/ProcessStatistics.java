@@ -1,3 +1,5 @@
+import oracle.jrockit.jfr.StringConstantPool;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,6 +10,11 @@ public class ProcessStatistics extends Statistics{
         this.ipAddress = ipAddress;
     }
 
+    public class Process {
+        public String id = new String();
+        public String name = new String();
+    }
+
     public String getAll () throws IOException { //1.3.6.1.2.1.25.4.2.1
         String allProcessStatistics = new String();
         String snmpCommand = "1.3.6.1.2.1.25.4.2.1";
@@ -16,18 +23,22 @@ public class ProcessStatistics extends Statistics{
         return allProcessStatistics;
     }
 
-    public HashMap<String, String> getProcessNames () throws IOException { //1.3.6.1.2.1.25.4.2.1.2
-        HashMap<String, String> processes = new HashMap<String, String>();
+    public String[][] getProcessNames () throws IOException { //1.3.6.1.2.1.25.4.2.1.2
+
         String snmpCommand = "1.3.6.1.2.1.25.4.2.1.2";
         String regexPattern = "(?<=: ).+";
         String regexPatternForId = "(?<!Name)\\d+(?= )";
         ArrayList<String> processNames = runSnmpCommand(snmpCommand, regexPattern, ipAddress);
         ArrayList<String> processIds = runSnmpCommand(snmpCommand , regexPatternForId, ipAddress);
+        String [][] processes = new String[processIds.size()][processIds.size()];
         for (int i=0 ; i < processIds.size(); i++){
-            processes.put(processIds.get(i), processNames.get(i));
+            System.out.println("id:" + processIds.get(i) + " name: "+ processNames.get(i));
+            processes[i][0] = processIds.get(i);
+            processes[i][1] = processNames.get(i);
         }
-        for (String name : processNames)
-            System.out.println(name);
+        //for (String name : processNames)
+            //System.out.println(name);
+        //System.out.println(processes);
         return  processes;
     }
 

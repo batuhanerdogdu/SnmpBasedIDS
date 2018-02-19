@@ -15,6 +15,7 @@ public class HTMLparser  {
         HTMLparser htmlParser = new HTMLparser();
         //htmlParser.getHTMLcontentOfMalwareDomainListCom();
         //htmlParser.getHTMLcontentOfMcAfeeCom();
+        htmlParser.getHMTLcontentOfSymantecCom();
     }
 
     //url is the html file's url, part is the required html part (e.g <br>)

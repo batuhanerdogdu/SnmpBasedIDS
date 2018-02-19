@@ -33,6 +33,27 @@ public class SystemInformation extends Statistics {
         return systemName;
     }
 
+    public  String getIpAddress () throws  IOException {
+        ArrayList<String> ipAddresses = new ArrayList<String>();
+        String ipAddress = new String();
+        String command = "ifconfig";
+        String regexPattern = "(?<= inet addr:)\\S+";
+        String[] args = new String[] {"/bin/bash", "-c", command};
+        Process proc = new ProcessBuilder(args).start();
+        BufferedReader r = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+        Pattern pattern = Pattern.compile(regexPattern);
+        String line;
+
+        while ((line = r.readLine()) != null){
+            Matcher matcher = pattern.matcher(line);
+            while (matcher.find()){
+                ipAddresses.add((matcher.group().substring(0, matcher.group().length())).replace(' ', '.'));
+            }
+        }
+        ipAddress = ipAddresses.get(1);
+        return  ipAddress;
+    }
+
     public String getMacAddress () throws IOException {
         String macAddress =  new String();
         String command = "ifconfig";

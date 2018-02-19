@@ -176,11 +176,11 @@ public class OntologyConnection {
     public static void main(String argv[]) throws IOException {
         OntologyConnection oc = new OntologyConnection();
         HTMLparser htmLparser = new HTMLparser();
-        ProcessStatistics ps = new ProcessStatistics("127.0.0.1");
+        ProcessStatistics ps = new ProcessStatistics("192.168.43.130");
         //ArrayList<String> badIPs = htmLparser.getHTMLcontentOfBadIpCom();
         //ArrayList<Malware> malwaresOfSymantec = htmLparser.getHMTLcontentOfSymantecCom();
         //ArrayList<BadIP> badIPsOfDomainList = htmLparser.getHTMLcontentOfMalwareDomainListCom();
-        HashMap<String, String> processes = ps.getProcessNames();
+        ps.getProcessNames();
         //ArrayList<String> processDirs = ps.getProcessRunDirectories();
 
 
@@ -191,10 +191,10 @@ public class OntologyConnection {
         n.add("1.1.1.1");
         n.add("127.0.0.1");
         n.add("0.0.0.0");
-        insertIndividuals(n, "Agent");
-        execSelectAndProcess(prefixSNMP + prefixRDF + "SELECT ?s WHERE {?s rdf:type snmp:Agent}");
-        deleteIndividuals(n, "Agent");
-        execSelectAndProcess(prefixSNMP + prefixRDF +
-                "SELECT ?s WHERE {?s rdf:type snmp:Agent}");
+        //insertIndividuals(n, "Agent");
+        //execSelectAndProcess(prefixSNMP + prefixRDF + "SELECT ?s WHERE {?s rdf:type snmp:Agent}");
+        //deleteIndividuals(n, "Agent");
+        //execSelectAndProcess(prefixSNMP + prefixRDF +
+                //"SELECT ?s WHERE {?s rdf:type snmp:Agent}");
     }
 }
