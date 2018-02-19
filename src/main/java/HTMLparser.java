@@ -1,11 +1,9 @@
-import org.apache.jena.base.Sys;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,9 +17,9 @@ public class HTMLparser  {
     }
 
     //url is the html file's url, part is the required html part (e.g <br>)
-    public ArrayList<BadIP> getHTMLcontentOfMalwareDomainListCom() throws IOException {
+    public ArrayList<BadDomain> getHTMLcontentOfMalwareDomainListCom() throws IOException {
         String url = "https://www.malwaredomainlist.com/mdl.php";
-        ArrayList<BadIP> badIPs = new ArrayList<BadIP>();
+        ArrayList<BadDomain> badDomains = new ArrayList<BadDomain>();
         Document document = Jsoup.connect(url).timeout(10*10000).get();
         Elements elements = document.getElementsByTag("tbody");
         Elements rows = elements.select("tr");
@@ -45,32 +43,32 @@ public class HTMLparser  {
                 }
             }
             if (entries.size() > 1){
-                BadIP badIP = new BadIP();
+                BadDomain badDomain = new BadDomain();
 
-                if (!entries.get(0).equals(null)) badIP.setDateOfDiscovery(entries.get(0));
-                else badIP.setDateOfDiscovery("Unknown");
-                if (!entries.get(1).equals(null)) badIP.setDomainName(entries.get(1));
-                else badIP.setDomainName("Unknown");
-                if (!entries.get(2).equals(null)) badIP.setIpAddress(entries.get(2));
-                else badIP.setIpAddress("Unknown");
-                if (!entries.get(3).equals(null)) badIP.setReverseLookupAddress(entries.get(3));
-                else badIP.setReverseLookupAddress("Unknown");
-                if (!entries.get(4).equals(null)) badIP.setDescription(entries.get(4));
-                else badIP.setDescription("Unknown");
-                if (!entries.get(5).equals(null)) badIP.setRegistrant(entries.get(5));
-                else badIP.setRegistrant("Unknown");
-                if (!entries.get(6).equals(null)) badIP.setAsn(entries.get(6));
-                else badIP.setAsn("Unknown");
-                //System.out.println(badIP.getDomainName()+" "+badIP.getReverseLookupAddress() +" "+
-                //        badIP.getIpAddress() +" "+badIP.getDateOfDiscovery()+ " " +badIP.getAsn() );
+                if (!entries.get(0).equals(null)) badDomain.setDateOfDiscovery(entries.get(0));
+                else badDomain.setDateOfDiscovery("Unknown");
+                if (!entries.get(1).equals(null)) badDomain.setDomainName(entries.get(1));
+                else badDomain.setDomainName("Unknown");
+                if (!entries.get(2).equals(null)) badDomain.setIpAddress(entries.get(2));
+                else badDomain.setIpAddress("Unknown");
+                if (!entries.get(3).equals(null)) badDomain.setReverseLookupAddress(entries.get(3));
+                else badDomain.setReverseLookupAddress("Unknown");
+                if (!entries.get(4).equals(null)) badDomain.setDescription(entries.get(4));
+                else badDomain.setDescription("Unknown");
+                if (!entries.get(5).equals(null)) badDomain.setRegistrant(entries.get(5));
+                else badDomain.setRegistrant("Unknown");
+                if (!entries.get(6).equals(null)) badDomain.setAsn(entries.get(6));
+                else badDomain.setAsn("Unknown");
+                //System.out.println(badDomain.getDomainName()+" "+badDomain.getReverseLookupAddress() +" "+
+                //        badDomain.getIpAddress() +" "+badDomain.getDateOfDiscovery()+ " " +badDomain.getAsn() );
 
-                badIPs.add(badIP);
+                badDomains.add(badDomain);
             }
         }
-        return badIPs;
+        return badDomains;
     }
 
-    public ArrayList<String> getHTMLcontentOfBadIpCom () throws IOException {
+    public ArrayList<BadDomain> getHTMLcontentOfBadIpCom () throws IOException {
         String url = "https://www.badips.com/get/list/ssh/3?age=1w";
         Document document = Jsoup.connect(url).timeout(10*10000).get();
         Elements elements = document.getElementsByTag("html");
@@ -81,14 +79,35 @@ public class HTMLparser  {
             e.printStackTrace();
         }*/
         String[] temp = elements.text().split("(?<= ).\\S+");
-        ArrayList<String> badIps = new ArrayList<String>();
+        ArrayList<BadDomain> badDomains = new ArrayList<BadDomain>();
 
         for (int i=0 ; i < temp.length ; i++) { //map string array to arraylist
-            badIps.add(temp[i]);
+            BadDomain bd = new BadDomain();
+            bd.setIpAddress(temp[i]);
+            bd.setDateOfDiscovery("Unknown");
+            bd.setAsn("Unknown");
+            bd.setDescription("Unknown");
+            bd.setRegistrant("Unknown");
+            bd.setReverseLookupAddress("Unknown");
+            bd.setDomainName("Unknown");
         }
 
-        System.out.println("1st ip address: "+ badIps.get(0));
-        return badIps;
+        //System.out.println("1st ip address: "+ badIps.get(0));
+        return badDomains;
+    }
+
+    public ArrayList<BadDomain> getAllBadDomains () throws IOException {
+        ArrayList<BadDomain> badDomains = new ArrayList<BadDomain>();
+
+        ArrayList<BadDomain> mdlcom = getHTMLcontentOfMalwareDomainListCom();
+        ArrayList<BadDomain> badipcom = getHTMLcontentOfBadIpCom();
+
+        for (BadDomain bd : mdlcom){
+            for (BadDomain bd1 : badipcom) {
+                //check each ip then add preferably mdlcom
+            }
+        }
+        return badDomains;
     }
 
     public ArrayList<String> getHTMLcontentOfMcAfeeCom () throws IOException {

@@ -5,17 +5,11 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.update.*;
 import org.apache.jena.util.FileManager;
-import org.apache.jena.util.OneToManyMap;
-import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class OntologyConnection {
     private static final Logger LOGGER = LogManager.getLogger(OntologyConnection.class);
@@ -44,6 +38,29 @@ public class OntologyConnection {
         if (model == null){
             throw new IllegalArgumentException("File "+ inputFileName + " not found! Please check the directory and try again.");
         }
+
+        //add malwares and badinternet domains
+
+        HTMLparser htmLparser = new HTMLparser();
+        ArrayList<Malware> malwares = htmLparser.getHMTLcontentOfSymantecCom();
+        ArrayList<BadDomain> badDomains = htmLparser.getAllBadDomains();
+
+        OntClass malware = model.getOntClass(nameSpace + "Malware");
+        OntClass badInternetDomain = model.getOntClass(nameSpace + "BadInternetDomain");
+        OntProperty type = model.getOntProperty(nameSpace + "type");
+        OntProperty discoveryDate = model.getOntProperty(nameSpace + "discoveryDate");
+
+        for (Malware m : malwares){
+            Individual individual = model.createIndividual(nameSpace + m.getName(), malware);
+            individual.addProperty(type, m.getType());
+            individual.addProperty(discoveryDate, m.getDiscoveryDate());
+        }
+
+        for (BadDomain bd : badDomains) {
+            Individual individual = model.createIndividual(nameSpace + bd.getIpAddress(), badInternetDomain);
+
+        }
+
     }
 
     public static void uploadRDF(File rdf , String URI)
@@ -179,7 +196,7 @@ public class OntologyConnection {
         ProcessStatistics ps = new ProcessStatistics("192.168.43.130");
         //ArrayList<String> badIPs = htmLparser.getHTMLcontentOfBadIpCom();
         //ArrayList<Malware> malwaresOfSymantec = htmLparser.getHMTLcontentOfSymantecCom();
-        //ArrayList<BadIP> badIPsOfDomainList = htmLparser.getHTMLcontentOfMalwareDomainListCom();
+        //ArrayList<BadDomain> badIPsOfDomainList = htmLparser.getHTMLcontentOfMalwareDomainListCom();
         ps.getProcessNames();
         //ArrayList<String> processDirs = ps.getProcessRunDirectories();
 

@@ -1,20 +1,12 @@
 <?xml version="1.0"?>
-
-
-<!DOCTYPE rdf:RDF [
-    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
-    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
-    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
-    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
-]>
-
-
 <rdf:RDF xmlns="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#"
      xml:base="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP"
-     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
-     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:snmp="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#">
     <owl:Ontology rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP"/>
     
 
@@ -33,8 +25,8 @@
     <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#executes -->
 
     <owl:ObjectProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#executes">
-        <rdfs:range rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Process"/>
         <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#User"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Process"/>
     </owl:ObjectProperty>
     
 
@@ -51,7 +43,7 @@
     <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#hasProfile -->
 
     <owl:ObjectProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#hasProfile">
-        <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
         <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Agent"/>
         <rdfs:range rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#SnmpProfile"/>
     </owl:ObjectProperty>
@@ -61,8 +53,8 @@
     <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#hasStatistic -->
 
     <owl:ObjectProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#hasStatistic">
-        <rdf:type rdf:resource="&owl;FunctionalProperty"/>
-        <rdf:type rdf:resource="&owl;InverseFunctionalProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#InverseFunctionalProperty"/>
         <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Agent"/>
         <rdfs:range rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Statistic"/>
     </owl:ObjectProperty>
@@ -81,8 +73,8 @@
     <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#isDescribedWith -->
 
     <owl:ObjectProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#isDescribedWith">
-        <rdf:type rdf:resource="&owl;FunctionalProperty"/>
-        <rdf:type rdf:resource="&owl;InverseFunctionalProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#InverseFunctionalProperty"/>
         <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Agent"/>
         <rdfs:range rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#SystemInformation"/>
     </owl:ObjectProperty>
@@ -92,8 +84,8 @@
     <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#isLoggedOn -->
 
     <owl:ObjectProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#isLoggedOn">
-        <rdfs:range rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Agent"/>
         <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#User"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Agent"/>
     </owl:ObjectProperty>
     
 
@@ -110,8 +102,8 @@
     <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#runsOn -->
 
     <owl:ObjectProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#runsOn">
-        <rdfs:range rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Agent"/>
         <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Process"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Agent"/>
     </owl:ObjectProperty>
     
 
@@ -127,29 +119,11 @@
     
 
 
-    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#15MinuteLoad -->
+    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#asn -->
 
-    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#15MinuteLoad">
-        <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#CpuStatistic"/>
-        <rdfs:range rdf:resource="&xsd;string"/>
-    </owl:DatatypeProperty>
-    
-
-
-    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#1MinuteLoad -->
-
-    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#1MinuteLoad">
-        <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#CpuStatistic"/>
-        <rdfs:range rdf:resource="&xsd;string"/>
-    </owl:DatatypeProperty>
-    
-
-
-    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#5MinuteLoad -->
-
-    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#5MinuteLoad">
-        <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#CpuStatistic"/>
-        <rdfs:range rdf:resource="&xsd;string"/>
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#asn">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#BadInternetDomain"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
     </owl:DatatypeProperty>
     
 
@@ -158,7 +132,7 @@
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#authenticationPassphrase">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#v3Profile"/>
-        <rdfs:range rdf:resource="&xsd;string"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
     </owl:DatatypeProperty>
     
 
@@ -167,7 +141,7 @@
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#authenticationType">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#v3Profile"/>
-        <rdfs:range rdf:resource="&xsd;string"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
     </owl:DatatypeProperty>
     
 
@@ -176,7 +150,7 @@
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#availableSpaceonTheDisk">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#DiskStatistic"/>
-        <rdfs:range rdf:resource="&xsd;int"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
     </owl:DatatypeProperty>
     
 
@@ -185,7 +159,16 @@
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#availableSwapSize">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#MemoryStatistic"/>
-        <rdfs:range rdf:resource="&xsd;int"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#description -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#description">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#BadInternetDomain"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
     </owl:DatatypeProperty>
     
 
@@ -194,7 +177,26 @@
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#deviceName">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Agent"/>
-        <rdfs:range rdf:resource="&xsd;string"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#discoveryDate -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#discoveryDate">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#BadInternetDomain"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Malware"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#domainName -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#domainName">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#BadInternetDomain"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
     </owl:DatatypeProperty>
     
 
@@ -203,7 +205,7 @@
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#encryptionPassphrase">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#v3Profile"/>
-        <rdfs:range rdf:resource="&xsd;string"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
     </owl:DatatypeProperty>
     
 
@@ -212,7 +214,7 @@
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#encryptionType">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#v3Profile"/>
-        <rdfs:range rdf:resource="&xsd;string"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
     </owl:DatatypeProperty>
     
 
@@ -221,7 +223,7 @@
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#idleCpuTime">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#CpuStatistic"/>
-        <rdfs:range rdf:resource="&xsd;int"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
     </owl:DatatypeProperty>
     
 
@@ -230,7 +232,7 @@
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#macAddress">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Agent"/>
-        <rdfs:range rdf:resource="&xsd;string"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
     </owl:DatatypeProperty>
     
 
@@ -238,9 +240,9 @@
     <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#pathOfTheDeviceForThePartition -->
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#pathOfTheDeviceForThePartition">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
         <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#DiskStatistic"/>
-        <rdfs:range rdf:resource="&xsd;string"/>
-        <rdfs:subPropertyOf rdf:resource="&owl;topDataProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
     </owl:DatatypeProperty>
     
 
@@ -249,7 +251,7 @@
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#pathWhereDiskIsMounted">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#DiskStatistic"/>
-        <rdfs:range rdf:resource="&xsd;string"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
     </owl:DatatypeProperty>
     
 
@@ -258,7 +260,7 @@
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#percentageOfIdleCpuTime">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#CpuStatistic"/>
-        <rdfs:range rdf:resource="&xsd;int"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
     </owl:DatatypeProperty>
     
 
@@ -267,7 +269,7 @@
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#percentageOfInodeOnTheDisk">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#DiskStatistic"/>
-        <rdfs:range rdf:resource="&xsd;int"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
     </owl:DatatypeProperty>
     
 
@@ -276,7 +278,7 @@
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#percentageOfSpaceUsedOnTheDisk">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#DiskStatistic"/>
-        <rdfs:range rdf:resource="&xsd;int"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
     </owl:DatatypeProperty>
     
 
@@ -285,7 +287,7 @@
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#percentageOfSystemCpuTime">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#CpuStatistic"/>
-        <rdfs:range rdf:resource="&xsd;int"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
     </owl:DatatypeProperty>
     
 
@@ -294,26 +296,14 @@
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#percentageOfUserCpuTime">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#CpuStatistic"/>
-        <rdfs:range rdf:resource="&xsd;int"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
     </owl:DatatypeProperty>
     
 
 
-    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#processID -->
+    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#processName -->
 
-    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#processID">
-        <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Process"/>
-        <rdfs:range rdf:resource="&xsd;string"/>
-    </owl:DatatypeProperty>
-    
-
-
-    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#processType -->
-
-    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#processType">
-        <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Process"/>
-        <rdfs:range rdf:resource="&xsd;string"/>
-    </owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#processName"/>
     
 
 
@@ -321,7 +311,7 @@
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#publicName">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#v2cProfile"/>
-        <rdfs:range rdf:resource="&xsd;string"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
     </owl:DatatypeProperty>
     
 
@@ -330,7 +320,7 @@
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#rawNiceCpuTime">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#CpuStatistic"/>
-        <rdfs:range rdf:resource="&xsd;int"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
     </owl:DatatypeProperty>
     
 
@@ -339,7 +329,7 @@
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#rawSystemCpuTime">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#CpuStatistic"/>
-        <rdfs:range rdf:resource="&xsd;int"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
     </owl:DatatypeProperty>
     
 
@@ -348,7 +338,25 @@
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#rawUserCpuTime">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#CpuStatistic"/>
-        <rdfs:range rdf:resource="&xsd;int"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#registrant -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#registrant">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#BadInternetDomain"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#reverseLookupAddress -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#reverseLookupAddress">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#BadInternetDomain"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
     </owl:DatatypeProperty>
     
 
@@ -357,7 +365,7 @@
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#runDirectory">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Process"/>
-        <rdfs:range rdf:resource="&xsd;string"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
     </owl:DatatypeProperty>
     
 
@@ -366,7 +374,7 @@
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#runParameter">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Process"/>
-        <rdfs:range rdf:resource="&xsd;string"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
     </owl:DatatypeProperty>
     
 
@@ -375,7 +383,7 @@
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#runStatus">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Process"/>
-        <rdfs:range rdf:resource="&xsd;string"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
     </owl:DatatypeProperty>
     
 
@@ -384,7 +392,7 @@
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#securityLevel">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#v3Profile"/>
-        <rdfs:range rdf:resource="&xsd;string"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
     </owl:DatatypeProperty>
     
 
@@ -393,7 +401,7 @@
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#securityName">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#v3Profile"/>
-        <rdfs:range rdf:resource="&xsd;string"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
     </owl:DatatypeProperty>
     
 
@@ -402,7 +410,7 @@
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#systemName">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#SystemInformation"/>
-        <rdfs:range rdf:resource="&xsd;string"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
     </owl:DatatypeProperty>
     
 
@@ -411,7 +419,7 @@
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#systemUpTime">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#SystemInformation"/>
-        <rdfs:range rdf:resource="&xsd;string"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
     </owl:DatatypeProperty>
     
 
@@ -420,7 +428,7 @@
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#totalCachedMemory">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#MemoryStatistic"/>
-        <rdfs:range rdf:resource="&xsd;int"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
     </owl:DatatypeProperty>
     
 
@@ -429,7 +437,7 @@
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#totalRamBuffered">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#MemoryStatistic"/>
-        <rdfs:range rdf:resource="&xsd;int"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
     </owl:DatatypeProperty>
     
 
@@ -438,7 +446,7 @@
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#totalRamFree">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#MemoryStatistic"/>
-        <rdfs:range rdf:resource="&xsd;int"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
     </owl:DatatypeProperty>
     
 
@@ -447,7 +455,7 @@
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#totalRamInMachine">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#MemoryStatistic"/>
-        <rdfs:range rdf:resource="&xsd;int"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
     </owl:DatatypeProperty>
     
 
@@ -456,7 +464,7 @@
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#totalRamShared">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#MemoryStatistic"/>
-        <rdfs:range rdf:resource="&xsd;int"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
     </owl:DatatypeProperty>
     
 
@@ -465,7 +473,7 @@
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#totalRamUsed">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#MemoryStatistic"/>
-        <rdfs:range rdf:resource="&xsd;int"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
     </owl:DatatypeProperty>
     
 
@@ -474,7 +482,7 @@
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#totalSizeOfTheDiskOrPartition">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#DiskStatistic"/>
-        <rdfs:range rdf:resource="&xsd;int"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
     </owl:DatatypeProperty>
     
 
@@ -483,7 +491,7 @@
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#totalSwapSize">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#MemoryStatistic"/>
-        <rdfs:range rdf:resource="&xsd;int"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
     </owl:DatatypeProperty>
     
 
@@ -492,7 +500,8 @@
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#type">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Malware"/>
-        <rdfs:range rdf:resource="&xsd;string"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Process"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
     </owl:DatatypeProperty>
     
 
@@ -501,7 +510,7 @@
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#usedSpaceOnTheDisk">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#DiskStatistic"/>
-        <rdfs:range rdf:resource="&xsd;int"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
     </owl:DatatypeProperty>
     
 
@@ -510,7 +519,34 @@
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#username">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#User"/>
-        <rdfs:range rdf:resource="&xsd;string"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#1MinuteLoad -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#1MinuteLoad">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#CpuStatistic"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#15MinuteLoad -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#15MinuteLoad">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#CpuStatistic"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#5MinuteLoad -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#5MinuteLoad">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#CpuStatistic"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
     </owl:DatatypeProperty>
     
 
@@ -631,7 +667,7 @@
 
     <owl:Class rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#SystemInformation">
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Statistic"/>
-        <rdfs:comment rdf:datatype="&xsd;string">System information is defined with system description</rdfs:comment>
+        <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">System information is defined with system description</rdfs:comment>
     </owl:Class>
     
 
@@ -669,13 +705,32 @@
     <!-- 
     ///////////////////////////////////////////////////////////////////////////////////////
     //
+    // Individuals
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#0.0.0.0 -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#0.0.0.0">
+        <macAddress rdf:datatype="http://www.w3.org/2001/XMLSchema#string">52:25:54:65:85:3a</macAddress>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
     // General axioms
     //
     ///////////////////////////////////////////////////////////////////////////////////////
      -->
 
     <rdf:Description>
-        <rdf:type rdf:resource="&owl;AllDisjointClasses"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
         <owl:members rdf:parseType="Collection">
             <rdf:Description rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#v1Profile"/>
             <rdf:Description rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#v2cProfile"/>
@@ -686,5 +741,5 @@
 
 
 
-<!-- Generated by the OWL API (version 3.4.2) http://owlapi.sourceforge.net -->
+<!-- Generated by the OWL API (version 4.2.8.20170104-2310) https://github.com/owlcs/owlapi -->
 
