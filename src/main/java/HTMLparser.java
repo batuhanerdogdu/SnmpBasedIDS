@@ -13,7 +13,9 @@ public class HTMLparser  {
         HTMLparser htmlParser = new HTMLparser();
         //htmlParser.getHTMLcontentOfMalwareDomainListCom();
         //htmlParser.getHTMLcontentOfMcAfeeCom();
-        htmlParser.getHMTLcontentOfSymantecCom();
+        //htmlParser.getHTMLcontentOfMalwareDomainListCom();
+        //htmlParser.getHTMLcontentOfBadIpCom();
+        htmlParser.getAllBadDomains();
     }
 
     //url is the html file's url, part is the required html part (e.g <br>)
@@ -21,14 +23,15 @@ public class HTMLparser  {
         String url = "https://www.malwaredomainlist.com/mdl.php";
         ArrayList<BadDomain> badDomains = new ArrayList<BadDomain>();
         Document document = Jsoup.connect(url).timeout(10*10000).get();
-        Elements elements = document.getElementsByTag("tbody");
-        Elements rows = elements.select("tr");
-        //System.out.println(rows);
         try {//website responses late so we make the program wait...
             Thread.sleep(8000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        Elements elements = document.getElementsByTag("tbody");
+        Elements rows = elements.select("tr");
+        //System.out.println(rows);
+
 
         rows.remove(0);
         rows.remove(1); //first two rows are not necessary
@@ -47,8 +50,16 @@ public class HTMLparser  {
 
                 if (!entries.get(0).equals(null)) badDomain.setDateOfDiscovery(entries.get(0));
                 else badDomain.setDateOfDiscovery("Unknown");
-                if (!entries.get(1).equals(null)) badDomain.setDomainName(entries.get(1));
-                else badDomain.setDomainName("Unknown");
+                ArrayList<String> domains = new ArrayList<String>();
+
+                if (!entries.get(1).equals(null)) {
+                    domains.add(entries.get(1));
+                    badDomain.setDomainName(domains);
+                }
+                else{
+                    domains.add("Unknown");
+                    badDomain.setDomainName(domains);
+                }
                 if (!entries.get(2).equals(null)) badDomain.setIpAddress(entries.get(2));
                 else badDomain.setIpAddress("Unknown");
                 if (!entries.get(3).equals(null)) badDomain.setReverseLookupAddress(entries.get(3));
@@ -64,7 +75,25 @@ public class HTMLparser  {
 
                 badDomains.add(badDomain);
             }
+            for (int i = 0; i < badDomains.size(); i++){
+                for (int j = i+1; j <  badDomains.size(); j++){
+                    if (badDomains.get(i).getIpAddress().equals(badDomains.get(j).getIpAddress())){
+                        String temp = badDomains.get(j).getDomainName().get(0);
+                        ArrayList<String> domainNames = badDomains.get(i).getDomainName();
+                        domainNames.add(temp);
+                        badDomains.get(j).setDomainName(domainNames);
+                        badDomains.remove(i);
+                    }
+                }
+            }
         }
+        for(BadDomain bd : badDomains){
+            System.out.print("ip: " + bd.getIpAddress() + "domain names: ");
+            for(String s : bd.getDomainName())
+                System.out.print(s + " -- ");
+            System.out.print("\n");
+        }
+
         return badDomains;
     }
 
@@ -78,34 +107,64 @@ public class HTMLparser  {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }*/
-        String[] temp = elements.text().split("(?<= ).\\S+");
-        ArrayList<BadDomain> badDomains = new ArrayList<BadDomain>();
+        String regexPattern = "\\S+";
+        ArrayList<String> temp = new ArrayList<String>();
 
-        for (int i=0 ; i < temp.length ; i++) { //map string array to arraylist
+        Pattern pattern = Pattern.compile(regexPattern);
+        Matcher matcher = pattern.matcher(elements.text());
+        while (matcher.find()) { //REGEX AND FOR LOOP ABOVE WILL BE MERGED
+            temp.add((matcher.group().substring(0, matcher.group().length())));
+        }
+        ArrayList<BadDomain> badDomains = new ArrayList<BadDomain>();
+        ArrayList<String> unknownDomain = new ArrayList<String>();
+        unknownDomain.add("Unknown");
+        for (int i=0 ; i < temp.size() ; i++) { //map string array to arraylist
+            //System.out.println(temp.get(i));
             BadDomain bd = new BadDomain();
-            bd.setIpAddress(temp[i]);
+            bd.setIpAddress(temp.get(i));
             bd.setDateOfDiscovery("Unknown");
             bd.setAsn("Unknown");
             bd.setDescription("Unknown");
             bd.setRegistrant("Unknown");
             bd.setReverseLookupAddress("Unknown");
-            bd.setDomainName("Unknown");
+            bd.setDomainName(unknownDomain);
+            badDomains.add(bd);
         }
-
-        //System.out.println("1st ip address: "+ badIps.get(0));
+        /*for (BadDomain bd : badDomains) {
+            System.out.println(bd.getIpAddress());
+        }*/
         return badDomains;
     }
 
     public ArrayList<BadDomain> getAllBadDomains () throws IOException {
         ArrayList<BadDomain> badDomains = new ArrayList<BadDomain>();
-
-        ArrayList<BadDomain> mdlcom = getHTMLcontentOfMalwareDomainListCom();
         ArrayList<BadDomain> badipcom = getHTMLcontentOfBadIpCom();
+        System.out.println("Bad ip website parsed");
+        ArrayList<BadDomain> mdlcom = getHTMLcontentOfMalwareDomainListCom();
+        System.out.println("Malware domain list parsed.");
 
-        for (BadDomain bd : mdlcom){
-            for (BadDomain bd1 : badipcom) {
+
+        //System.out.println(badipcom.size());
+        //System.out.println(mdlcom.size());
+
+        for (BadDomain bd : badipcom){
+            for (BadDomain bd1 : mdlcom) {
                 //check each ip then add preferably mdlcom
+                if (bd.getIpAddress().equals(bd1.getIpAddress())){
+                    System.out.println("Same: " + bd.getIpAddress());
+                    badDomains.add(bd1);
+                    badipcom.remove(bd);
+                    mdlcom.remove(bd1);
+                }//add the same ones to the result arraylist
             }
+        }
+        System.out.println(badipcom.size());
+        System.out.println(mdlcom.size());
+        for (BadDomain bd : badipcom){
+            badDomains.add(bd);
+        }
+        for (BadDomain bd  :mdlcom) {
+            badDomains.add(bd);
         }
         return badDomains;
     }

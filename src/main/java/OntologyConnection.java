@@ -49,6 +49,11 @@ public class OntologyConnection {
         OntClass badInternetDomain = model.getOntClass(nameSpace + "BadInternetDomain");
         OntProperty type = model.getOntProperty(nameSpace + "type");
         OntProperty discoveryDate = model.getOntProperty(nameSpace + "discoveryDate");
+        OntProperty asn = model.getOntProperty(nameSpace + "asn");
+        OntProperty registrant = model.getOntProperty(nameSpace + "registrant");
+        OntProperty description = model.getOntProperty(nameSpace + "description");
+        OntProperty domainName = model.getOntProperty(nameSpace + "domainName");
+        OntProperty reverseLookupAddress = model.getOntProperty(nameSpace + "reverseLookupAddress");
 
         for (Malware m : malwares){
             Individual individual = model.createIndividual(nameSpace + m.getName(), malware);
@@ -58,7 +63,14 @@ public class OntologyConnection {
 
         for (BadDomain bd : badDomains) {
             Individual individual = model.createIndividual(nameSpace + bd.getIpAddress(), badInternetDomain);
-
+            individual.addProperty(discoveryDate, bd.getDateOfDiscovery());
+            individual.addProperty(asn, bd.getAsn());
+            individual.addProperty(registrant, bd.getRegistrant());
+            individual.addProperty(description, bd.getDescription());
+            individual.addProperty(reverseLookupAddress, bd.getReverseLookupAddress());
+            for (String dName : bd.getDomainName()){
+                individual.addProperty(domainName, dName);
+            }
         }
 
     }

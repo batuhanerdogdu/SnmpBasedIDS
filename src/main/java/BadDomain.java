@@ -1,8 +1,10 @@
+import java.util.ArrayList;
+
 public class BadDomain { //https://www.badips.com/get/list/ssh/3?age=1w
                     //https://www.malwaredomainlist.com/mdl.php?search=&colsearch=All&quantity=All
 
     private String dateOfDiscovery;
-    private String domainName;
+    private ArrayList<String> domainName;
     private String ipAddress;
     private String reverseLookupAddress;
     private String description;
@@ -17,11 +19,11 @@ public class BadDomain { //https://www.badips.com/get/list/ssh/3?age=1w
         this.dateOfDiscovery = dateOfDiscovery;
     }
 
-    public String getDomainName() {
+    public ArrayList<String> getDomainName() {
         return domainName;
     }
 
-    public void setDomainName(String domainName) {
+    public void setDomainName(ArrayList<String> domainName) {
         this.domainName = domainName;
     }
 
