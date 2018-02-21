@@ -1,7 +1,9 @@
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ViewIds extends JFrame{
@@ -30,19 +32,30 @@ public class ViewIds extends JFrame{
     private JScrollPane scpMemory;
     private JScrollPane scpDisk;
 
-    public ViewIds () throws IOException {
+    public ViewIds (ArrayList<String> ipAddresses) throws IOException {
         //get ip addresses
         //create a dropdown menu
         //for each ip address, reload the page and show info of that ip address
         //for now only ip is 127.0.0.1
+        String[] args = new String[] {"/bin/bash", "-c", "./fuseki.sh"};
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        Process proc = new ProcessBuilder(args).start();
         SystemInformation systemInformation = new SystemInformation("127.0.0.1");
         ProcessStatistics processStatistics = new ProcessStatistics("127.0.0.1");
         MemoryStatistics memoryStatistics = new MemoryStatistics("127.0.0.1");
         DiskStatistics diskStatistics = new DiskStatistics("127.0.0.1");
         CPUstatistics cpuStatistics = new CPUstatistics("127.0.0.1");
+        HTMLparser htmLparser = new HTMLparser();
+
 
         final JPanel panel = new JPanel(new GridBagLayout());
         final GridBagConstraints cs = new GridBagConstraints();
+
+        //ViewInit viewInit= new ViewInit();
 
         cs.fill = GridBagConstraints.HORIZONTAL;
 
@@ -70,7 +83,11 @@ public class ViewIds extends JFrame{
         cs.gridwidth = 1;
         panel.add(lbSysIp, cs);
 
-        lbIpAddresses = new JLabel("Ip Addresses: ");
+        String ips = null;
+        for (String s : ipAddresses)
+            ips += s + " ";
+        System.out.println(ips);
+        lbIpAddresses = new JLabel("Ip Addresses: " + ips);
         cs.gridx = 0;
         cs.gridy = 4;
         cs.gridwidth = 1;
@@ -166,19 +183,48 @@ public class ViewIds extends JFrame{
         cs.gridwidth = 2;
         panel.add(scpDisk, cs);
 
-        String[][] processes = processStatistics.getProcessNames();
-        for (int i = 0; i < processes.length; i++) {
-            txaProcess.append("id: " + processes[i][0] + " name: " + processes[i][1] + "\n");
+        OntologyConnection connection = new OntologyConnection();
+        connection.uploadRDF(new File(connection.getWorkingDirectory()+"snmpids.owl"),
+                connection.serviceURIforData);
+        ArrayList<String> processNames = new ArrayList<String>();
+        ArrayList<String> processIds = new ArrayList<String>();
+        ArrayList<ProcessStatistics.Process> processes = processStatistics.getProcessNames();
+
+        for (ProcessStatistics.Process process: processes){
+            processIds.add(process.getId());
+        }
+        connection.insertIndividuals(processIds, "Process");
+
+        for (ProcessStatistics.Process process : processes) {
+            txaProcess.append("id: " + process.getId() + " name: " + process.getName() + "\n");
+            processNames.add(process.getName());
+            ArrayList<String> name = new ArrayList<String>();
+            name.add(process.getName());
+            connection.insertDataProperties(process.getId(), "processName", name);
         }
 
         //add malwares to txaMalwares
+        ArrayList<Malware> malwares = htmLparser.getHMTLcontentOfSymantecCom();
+        for (Malware m : malwares) {
+            txaMalware.append("name: " + m.getName() + "\n");
+        }
         //add detected to txaDetected
+        String matchQuery = "SELECT ?x \n WHERE {?x " + OntologyConnection.rdfType +
+                OntologyConnection.nameSpace+"Malware." +
+                "?y "+ OntologyConnection.rdfType + " " +
+                OntologyConnection.nameSpace + "Process." +
+                "?z +"+ OntologyConnection.nameSpace + "processName ?y." +
+                "FILTER (?x = ?z)}";
+        connection.execSelectAndProcess(matchQuery);
 
         txaCpu.append("Percentage of system CPU: " + cpuStatistics.getPercentageOfSystemCPUtime() + "\n");
-        txaCpu.append("Percentage Of Idle CPU:"  + cpuStatistics.getPercentageOfIdleCPUtime() + "\n");
+        txaCpu.append("Percentage of idle CPU: "  + cpuStatistics.getPercentageOfIdleCPUtime() + "\n");
         txaCpu.append("Raw System CPU:" + cpuStatistics.getRawSystemCPUtime() + "\n");
+        txaCpu.append("Raw idle CPU: " + cpuStatistics.getRawIdleCPUtime() + "\n");
+        txaCpu.append("Raw user CPU: " + cpuStatistics.getRawUserCPUtime());
         txaCpu.append("1 minute load: " + cpuStatistics.get1MinuteLoad() + "\n");
         txaCpu.append("5 minute load: " + cpuStatistics.get5MinuteLoad() + "\n");
+        txaCpu.append("15 Minute load: " + cpuStatistics.get15MinuteLoad() + "\n");
 
         txaMemory.append("Total RAM: " + memoryStatistics.getTotalRAMinMachine() + "\n");
         txaMemory.append("Available swap space: " + memoryStatistics.getAvailableSwapSpace() + "\n");
@@ -190,20 +236,21 @@ public class ViewIds extends JFrame{
 
         txaDisk.append("Total disk size: " + diskStatistics.getTotalSizeOfTheDiskOrPartition().get(0) + "\n");
         txaDisk.append("Path where the disk is mounted: " + diskStatistics.getPathWhereDiskIsMounted().get(0) + "\n");
+        txaDisk.append("Path of the device for the partition: " + diskStatistics.getPathOfTheDeviceForThePartition().get(0) + "\n");
         txaDisk.append("Used space on the disk: " + diskStatistics.getUsedSpaceOnTheDisk().get(0) + "\n");
         txaDisk.append("Percentage of used space on the disk: " + diskStatistics.getPercentagesOfSpaceUsedOnDisk().get(0) + "\n");
+        txaDisk.append("Percentage of inodes on the disk: " + diskStatistics.getPercentageOfInodesOnDisk().get(0));
 
         panel.setBorder(new LineBorder(Color.GRAY));
         getContentPane().add(panel, BorderLayout.CENTER);
         pack();
         setResizable(true);
         //setLocationRelativeTo(parent);
-
     }
 
-    public static void main (String[] args) throws IOException {
+   /* public static void main (String[] args) throws IOException {
         ViewIds viewIds = new ViewIds();
         viewIds.setVisible(true);
-    }
+    }*/
 
 }

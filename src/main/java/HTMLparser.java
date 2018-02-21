@@ -87,12 +87,12 @@ public class HTMLparser  {
                 }
             }
         }
-        for(BadDomain bd : badDomains){
+        /*for(BadDomain bd : badDomains){
             System.out.print("ip: " + bd.getIpAddress() + "domain names: ");
             for(String s : bd.getDomainName())
                 System.out.print(s + " -- ");
             System.out.print("\n");
-        }
+        }*/
 
         return badDomains;
     }
@@ -102,11 +102,11 @@ public class HTMLparser  {
         Document document = Jsoup.connect(url).timeout(10*10000).get();
         Elements elements = document.getElementsByTag("html");
 
-        /*try {
+        try {
             Thread.sleep(8000);
         } catch (InterruptedException e) {
             e.printStackTrace();
-        }*/
+        }
         String regexPattern = "\\S+";
         ArrayList<String> temp = new ArrayList<String>();
 
@@ -151,15 +151,15 @@ public class HTMLparser  {
             for (BadDomain bd1 : mdlcom) {
                 //check each ip then add preferably mdlcom
                 if (bd.getIpAddress().equals(bd1.getIpAddress())){
-                    System.out.println("Same: " + bd.getIpAddress());
+                    //System.out.println("Same: " + bd.getIpAddress());
                     badDomains.add(bd1);
                     badipcom.remove(bd);
                     mdlcom.remove(bd1);
                 }//add the same ones to the result arraylist
             }
         }
-        System.out.println(badipcom.size());
-        System.out.println(mdlcom.size());
+        //System.out.println(badipcom.size());
+        //System.out.println(mdlcom.size());
         for (BadDomain bd : badipcom){
             badDomains.add(bd);
         }
@@ -180,7 +180,7 @@ public class HTMLparser  {
         }
         Elements elements = document.getElementsByTag("tbody");
         Elements rows =  elements.select("tr");
-        System.out.println(elements);
+        //System.out.println(elements);
         return malwares;
     }
 
@@ -250,10 +250,10 @@ public class HTMLparser  {
             }
 
         }
-        for (Malware mal : malwares){
+        /*for (Malware mal : malwares){
             System.out.println("Malware Name: "+ mal.getName() + "    Type: "+ mal.getType()+ " Discovery date: "+ mal.getDiscoveryDate());
             System.out.println("-----------------------------------------------------------------------------------------------");
-        }
+        }*/
         return malwares;
     }
 

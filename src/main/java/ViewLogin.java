@@ -17,6 +17,7 @@ public class ViewLogin extends JDialog{
     private boolean succeeded;
     private static String username = "root";
     private static String password = "password";
+    private String name;
     private int errorCounter = 0;
 
     public ViewLogin(Frame parent) {
@@ -115,6 +116,10 @@ public class ViewLogin extends JDialog{
         setLocationRelativeTo(parent);
     }
 
+    public void setName (String name) { this.name = name;}
+
+    public String getName () { return name; }
+
     public String getUsername() {
         return tfUsername.getText().trim();
     }
@@ -136,9 +141,20 @@ public class ViewLogin extends JDialog{
                     public void actionPerformed(ActionEvent e) {
                         ViewLogin loginDlg = new ViewLogin(frame);
                         loginDlg.setVisible(true);
+
                         // if logon successfully
                         if(loginDlg.isSucceeded()){
+                            ViewInit viewInit = new ViewInit(username);
+                            viewInit.setVisible(true);
                             loginDlg.setVisible(false);
+                            frame.setVisible(false);
+                            frame.dispose();
+                            try {
+                                dispose();
+                            } catch (Exception e1) {
+                                e1.printStackTrace();
+                            }
+
                         }
                     }
                 });
@@ -155,17 +171,14 @@ public class ViewLogin extends JDialog{
         return getUsername();
     }
 
-    public void close() {
-
-    }
-
-
-
-    /*public static void main (String[] args) {
+    public static void main (String[] args) {
         final JFrame frame = new JFrame("SNMPIDS");
-        final JButton btnLogin = new JButton("Click to login");
+        //final JButton btnLogin = new JButton("Click to login");
 
-        btnLogin.addActionListener(
+        ViewLogin viewLogin = new ViewLogin(frame);
+        viewLogin.run();
+
+        /*btnLogin.addActionListener(
                 new ActionListener(){
                     public void actionPerformed(ActionEvent e) {
                         Login loginDlg = new Login(frame);
@@ -175,13 +188,13 @@ public class ViewLogin extends JDialog{
                             btnLogin.setText("Hi " + loginDlg.getUsername() + "!");
                         }
                     }
-                });
+                });*/
 
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(300, 100);
-        frame.setLayout(new FlowLayout());
-        frame.getContentPane().add(btnLogin);
-        frame.setVisible(true);
-    }*/
+        //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //frame.setSize(300, 100);
+        //frame.setLayout(new FlowLayout());
+        //frame.getContentPane().add(btnLogin);
+        ///frame.setVisible(true);
+    }
 }
 

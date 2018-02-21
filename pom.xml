@@ -35,7 +35,6 @@
             <artifactId>pcap4j-core</artifactId>
             <version>1.7.3</version>
         </dependency>
-
         <dependency>
             <groupId>org.pcap4j</groupId>
             <artifactId>pcap4j-packetfactory-static</artifactId>

@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,19 +25,21 @@ public class ViewInit extends JFrame {
     private JRadioButton rdbNo1;
     private JTextField txfIp;
     private JTextArea txaIp;
+    final ArrayList<String> ipAddresses = new ArrayList<String>();
+    final JPanel panel = new JPanel(new GridBagLayout());
+    final GridBagConstraints cs = new GridBagConstraints();
+    final JFrame frame = new JFrame();
 
-    public ViewInit (Frame parent) {
+    public ViewInit (String username) {
         //super (parent, "Initialize", true);
 
-        ViewLogin login = new ViewLogin(parent);
-        String username = login.run();
-
-        final JPanel panel = new JPanel(new GridBagLayout());
-        final GridBagConstraints cs = new GridBagConstraints();
+        //ViewLogin login = new ViewLogin(parent);
+        //String username = login.run();
+        //panel.setVisible(true);
 
         cs.fill = GridBagConstraints.HORIZONTAL;
 
-        lbWelcome = new JLabel("Welcome " + username);
+        lbWelcome = new JLabel("Welcome "+ username );
         cs.gridx = 0;
         cs.gridy = 0;
         cs.gridwidth = 1;
@@ -72,7 +75,11 @@ public class ViewInit extends JFrame {
             public void actionPerformed(ActionEvent ev) {
                 if (rdbNo.isSelected()){
                     JOptionPane.showMessageDialog(panel, "You should configure SNMP first! Exiting system...");
-                    System.exit(1);
+                    try {
+                        dispose();
+                    } catch (Exception e1) {
+                        e1.printStackTrace();
+                    }
                 }
             }
         });
@@ -93,6 +100,7 @@ public class ViewInit extends JFrame {
             public void actionPerformed(ActionEvent ev) {
                 if (rdbYes1.isSelected()){
                     JOptionPane.showMessageDialog(panel, "Okay, please add Ip addresses one by one!");
+
                 }
             }
         });
@@ -143,7 +151,6 @@ public class ViewInit extends JFrame {
         cs.gridwidth = 1;
         panel.add(btnAdd, cs);
 
-        final ArrayList<String> ipAddresses = new ArrayList<String>();
         btnSubmit = new JButton("Submit");
         btnSubmit.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -155,6 +162,19 @@ public class ViewInit extends JFrame {
                 while (matcher.find()) {
                     ipAddresses.add((matcher.group().substring(0, matcher.group().length())));
                 }
+                JOptionPane.showMessageDialog(panel, "Ip addresses successfully added!");
+                try {
+                    dispose();
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
+                //panel.setVisible(false);
+                try {
+                    ViewIds ids = new ViewIds(ipAddresses);
+                    ids.setVisible(true);
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
             }
         });
         cs.gridy = 4;
@@ -164,16 +184,24 @@ public class ViewInit extends JFrame {
         panel.setBorder(new LineBorder(Color.GRAY));
         getContentPane().add(panel, BorderLayout.CENTER);
         pack();
+        setVisible(true);
         setResizable(true);
-        //setLocationRelativeTo(parent);
+        setLocationRelativeTo(frame);
+        //frame.add(getContentPane());
+        //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
+
+    public ArrayList<String> getIpAddresses() {
+        return ipAddresses;
+    }
+
 
     public static void main (String[] args){
 
 
         final JFrame frame = new JFrame("SNMPIDS");
-        ViewInit viewInit = new ViewInit(frame);
-        viewInit.setVisible(true);
+        ViewLogin viewLogin = new ViewLogin(frame);
+        viewLogin.run();
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(300, 100);

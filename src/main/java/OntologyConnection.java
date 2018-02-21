@@ -31,6 +31,7 @@ public class OntologyConnection {
 
 
     public OntologyConnection() throws IOException {
+
         String inputFileName = getWorkingDirectory()+"/snmpids.owl";
         OntModel model = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM, null); //initialize without reasoner
         InputStream in = FileManager.get().open(inputFileName);
@@ -38,6 +39,7 @@ public class OntologyConnection {
         if (model == null){
             throw new IllegalArgumentException("File "+ inputFileName + " not found! Please check the directory and try again.");
         }
+        FileOutputStream modelToWrite = null;
 
         //add malwares and badinternet domains
 
@@ -59,6 +61,7 @@ public class OntologyConnection {
             Individual individual = model.createIndividual(nameSpace + m.getName(), malware);
             individual.addProperty(type, m.getType());
             individual.addProperty(discoveryDate, m.getDiscoveryDate());
+            model.write(modelToWrite, "RDF/XML");
         }
 
         for (BadDomain bd : badDomains) {
@@ -71,11 +74,12 @@ public class OntologyConnection {
             for (String dName : bd.getDomainName()){
                 individual.addProperty(domainName, dName);
             }
+            model.write(modelToWrite, "RDF/XML");
         }
-
+        modelToWrite.flush();
     }
 
-    public static void uploadRDF(File rdf , String URI)
+    public void uploadRDF(File rdf , String URI)
             throws IOException {
 
         // parse the file
@@ -93,7 +97,7 @@ public class OntologyConnection {
 
     }
 
-    public static void execSelectAndPrint(String query) {
+    public void execSelectAndPrint(String query) {
         QueryExecution q = QueryExecutionFactory.sparqlService(serviceURIforSelect,
                 query);
         ResultSet results = q.execSelect();
@@ -110,7 +114,7 @@ public class OntologyConnection {
 
     }
 
-    public static void execSelectAndProcess(String query) {
+    public void execSelectAndProcess(String query) {
         QueryExecution q = QueryExecutionFactory.sparqlService(serviceURIforSelect,
                 query);
         ResultSet results = q.execSelect();
@@ -118,12 +122,12 @@ public class OntologyConnection {
         while (results.hasNext()) {
             QuerySolution soln = results.nextSolution();
             // assumes that you have an "?x" in your query
-            RDFNode x = soln.get("s");
+            RDFNode x = soln.get("x");
             System.out.println(x);
         }
     }
 
-    public static void insertIndividuals (ArrayList<String> instances, String className) {
+    public void insertIndividuals (ArrayList<String> instances, String className) {
         String queryBeginning = prefixSNMP + " " + prefixRDF + " " + prefixRDFS + " "+
                 prefixOWL + " " + prefixXML + " " + prefixXSD +" " + "\n" + "INSERT DATA " +
                 " { ";
@@ -139,7 +143,7 @@ public class OntologyConnection {
         processor.execute();
     }
 
-    public static void deleteIndividuals (ArrayList<String> instances, String className){
+    public void deleteIndividuals (ArrayList<String> instances, String className){
 
         String queryBeginning = prefixSNMP + " " + prefixRDF + " " + prefixRDFS + " "+
                 prefixOWL + " " + prefixXML + " " + prefixXSD +" " + "\n" + "DELETE DATA " +
@@ -155,7 +159,7 @@ public class OntologyConnection {
         processor.execute();
     }
 
-    public static void insertDataProperties (String instanceName, String propertyName, ArrayList<String> properties){
+    public void insertDataProperties (String instanceName, String propertyName, ArrayList<String> properties){
         String queryBeginning = prefixSNMP + " " + prefixRDF + " " + prefixRDFS + " "+
                 prefixOWL + " " + prefixXML + " " + prefixXSD +" " + "\n" + "INSERT DATA " +
                 " { ";
@@ -171,7 +175,7 @@ public class OntologyConnection {
         processor.execute();
     }
 
-    public static void deleteDataProperties (String instanceName, String propertyName, ArrayList<String> properties){
+    public void deleteDataProperties (String instanceName, String propertyName, ArrayList<String> properties){
         String queryBeginning = prefixSNMP + " " + prefixRDF + " " + prefixRDFS + " "+
                 prefixOWL + " " + prefixXML + " " + prefixXSD +" " + "\n" + "DELETE DATA " +
                 " { ";
@@ -202,7 +206,7 @@ public class OntologyConnection {
     }
 
 
-    public static void main(String argv[]) throws IOException {
+    /*public static void main(String argv[]) throws IOException {
         OntologyConnection oc = new OntologyConnection();
         HTMLparser htmLparser = new HTMLparser();
         ProcessStatistics ps = new ProcessStatistics("192.168.43.130");
@@ -225,5 +229,5 @@ public class OntologyConnection {
         //deleteIndividuals(n, "Agent");
         //execSelectAndProcess(prefixSNMP + prefixRDF +
                 //"SELECT ?s WHERE {?s rdf:type snmp:Agent}");
-    }
+    }*/
 }
