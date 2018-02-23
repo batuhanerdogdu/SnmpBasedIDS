@@ -3,6 +3,9 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 
 import static com.sun.deploy.uitoolkit.ToolkitStore.dispose;
 
@@ -15,12 +18,12 @@ public class ViewLogin extends JDialog{
     private JButton btnLogin;
     private JButton btnCancel;
     private boolean succeeded;
-    private static String username = "root";
-    private static String password = "password";
+    //private static String username = "root";
+    //private static String password = "password";
     private String name;
     private int errorCounter = 0;
 
-    public ViewLogin(Frame parent) {
+    public ViewLogin(Frame parent) throws IOException {
 
         super(parent, "Login", true);
         //
@@ -56,11 +59,33 @@ public class ViewLogin extends JDialog{
 
         btnLogin = new JButton("Login");
 
+
         btnLogin.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
+                OntologyConnection connection = null;
+                try {
+                    connection = new OntologyConnection();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+                try {
+                    connection.uploadRDF(new File(connection.getWorkingDirectory()+
+                                    "/snmpids.owl"), connection.serviceURIforData);
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+                ArrayList<String> username = connection.execSelectAndProcess(
+                        OntologyConnection.prefixSNMP + " \n " + OntologyConnection.prefixRDF +
+                        "\nSELECT ?x WHERE {?x rdf:type snmp:Administrator.}");
+                System.out.println(username.get(0));
+                ArrayList<String> password = connection.execSelectAndProcess(
+                        OntologyConnection.prefixSNMP + " \n " + OntologyConnection.prefixRDF +
+                        "\nSELECT ?x WHERE {?y rdf:type snmp:Administrator.\n" +
+                        "?y snmp:password ?x.}");
+                System.out.println(password.get(0));
 
-                if (getUsername().equals(username) && getPassword().equals(password)) {
+                if (getUsername().equals(username.get(0)) && getPassword().equals(password.get(0))) {
                     JOptionPane.showMessageDialog(ViewLogin.this,
                             "Hi " + getUsername() + "! You have successfully logged in.",
                             "Login",
@@ -139,12 +164,25 @@ public class ViewLogin extends JDialog{
         btnLogin.addActionListener(
                 new ActionListener(){
                     public void actionPerformed(ActionEvent e) {
-                        ViewLogin loginDlg = new ViewLogin(frame);
+                        ViewLogin loginDlg = null;
+                        try {
+                            loginDlg = new ViewLogin(frame);
+                        } catch (IOException e1) {
+                            e1.printStackTrace();
+                        }
                         loginDlg.setVisible(true);
 
                         // if logon successfully
                         if(loginDlg.isSucceeded()){
-                            ViewInit viewInit = new ViewInit(username);
+                            ViewInit viewInit = null;
+                            try {
+                                OntologyConnection connection = new OntologyConnection();
+                                ArrayList<String> username = connection.execSelectAndProcess(OntologyConnection.prefixSNMP + "\n" + OntologyConnection.prefixRDF +
+                                        "\nSELECT ?x WHERE {?x rdf:type snmp:Administrator.}");
+                                viewInit = new ViewInit(username.get(0));
+                            } catch (IOException e1) {
+                                e1.printStackTrace();
+                            }
                             viewInit.setVisible(true);
                             loginDlg.setVisible(false);
                             frame.setVisible(false);
@@ -175,7 +213,12 @@ public class ViewLogin extends JDialog{
         final JFrame frame = new JFrame("SNMPIDS");
         //final JButton btnLogin = new JButton("Click to login");
 
-        ViewLogin viewLogin = new ViewLogin(frame);
+        ViewLogin viewLogin = null;
+        try {
+            viewLogin = new ViewLogin(frame);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         viewLogin.run();
 
         /*btnLogin.addActionListener(

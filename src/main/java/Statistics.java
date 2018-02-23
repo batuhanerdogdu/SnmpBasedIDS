@@ -26,6 +26,7 @@ public abstract class Statistics {
                 results.add((matcher.group().substring(0, matcher.group().length())));
             }
         }
+        //proc.destroy();
         return results;
     }
 }

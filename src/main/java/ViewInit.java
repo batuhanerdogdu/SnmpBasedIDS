@@ -30,7 +30,7 @@ public class ViewInit extends JFrame {
     final GridBagConstraints cs = new GridBagConstraints();
     final JFrame frame = new JFrame();
 
-    public ViewInit (String username) {
+    public ViewInit (String username) throws IOException {
         //super (parent, "Initialize", true);
 
         //ViewLogin login = new ViewLogin(parent);
@@ -150,6 +150,7 @@ public class ViewInit extends JFrame {
         cs.gridx = 2;
         cs.gridwidth = 1;
         panel.add(btnAdd, cs);
+        final OntologyConnection connection = new OntologyConnection();
 
         btnSubmit = new JButton("Submit");
         btnSubmit.addActionListener(new ActionListener() {
@@ -161,6 +162,7 @@ public class ViewInit extends JFrame {
                 Matcher matcher = pattern.matcher(txaIp.getText());
                 while (matcher.find()) {
                     ipAddresses.add((matcher.group().substring(0, matcher.group().length())));
+                    connection.insertIndividuals(ipAddresses, "Agent");
                 }
                 JOptionPane.showMessageDialog(panel, "Ip addresses successfully added!");
                 try {
@@ -200,7 +202,12 @@ public class ViewInit extends JFrame {
 
 
         final JFrame frame = new JFrame("SNMPIDS");
-        ViewLogin viewLogin = new ViewLogin(frame);
+        ViewLogin viewLogin = null;
+        try {
+            viewLogin = new ViewLogin(frame);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         viewLogin.run();
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

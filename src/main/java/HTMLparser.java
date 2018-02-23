@@ -22,12 +22,12 @@ public class HTMLparser  {
     public ArrayList<BadDomain> getHTMLcontentOfMalwareDomainListCom() throws IOException {
         String url = "https://www.malwaredomainlist.com/mdl.php";
         ArrayList<BadDomain> badDomains = new ArrayList<BadDomain>();
-        Document document = Jsoup.connect(url).timeout(10*10000).get();
-        try {//website responses late so we make the program wait...
-            Thread.sleep(8000);
+        Document document = Jsoup.connect(url).timeout(15000).get();
+        /*try {//website responses late so we make the program wait...
+            Thread.sleep(5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
-        }
+        }*/
         Elements elements = document.getElementsByTag("tbody");
         Elements rows = elements.select("tr");
         //System.out.println(rows);
@@ -47,7 +47,7 @@ public class HTMLparser  {
             }
             if (entries.size() > 1){
                 BadDomain badDomain = new BadDomain();
-
+                //add relevant data
                 if (!entries.get(0).equals(null)) badDomain.setDateOfDiscovery(entries.get(0));
                 else badDomain.setDateOfDiscovery("Unknown");
                 ArrayList<String> domains = new ArrayList<String>();
@@ -75,7 +75,7 @@ public class HTMLparser  {
 
                 badDomains.add(badDomain);
             }
-            for (int i = 0; i < badDomains.size(); i++){
+            for (int i = 0; i < badDomains.size(); i++){ //merge same ip addresses' domain names
                 for (int j = i+1; j <  badDomains.size(); j++){
                     if (badDomains.get(i).getIpAddress().equals(badDomains.get(j).getIpAddress())){
                         String temp = badDomains.get(j).getDomainName().get(0);
@@ -101,12 +101,6 @@ public class HTMLparser  {
         String url = "https://www.badips.com/get/list/ssh/3?age=1w";
         Document document = Jsoup.connect(url).timeout(10*10000).get();
         Elements elements = document.getElementsByTag("html");
-
-        try {
-            Thread.sleep(8000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         String regexPattern = "\\S+";
         ArrayList<String> temp = new ArrayList<String>();
 
@@ -140,6 +134,11 @@ public class HTMLparser  {
         ArrayList<BadDomain> badDomains = new ArrayList<BadDomain>();
         ArrayList<BadDomain> badipcom = getHTMLcontentOfBadIpCom();
         System.out.println("Bad ip website parsed");
+        /*try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }*/
         ArrayList<BadDomain> mdlcom = getHTMLcontentOfMalwareDomainListCom();
         System.out.println("Malware domain list parsed.");
 

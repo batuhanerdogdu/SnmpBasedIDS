@@ -37,7 +37,8 @@ public class ViewIds extends JFrame{
         //create a dropdown menu
         //for each ip address, reload the page and show info of that ip address
         //for now only ip is 127.0.0.1
-        String[] args = new String[] {"/bin/bash", "-c", "./fuseki.sh"};
+        OntologyConnection connection = new OntologyConnection();
+        String[] args = new String[] {"/bin/bash", "-c", connection.getWorkingDirectory() +"./fuseki.sh"};
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
@@ -51,11 +52,9 @@ public class ViewIds extends JFrame{
         CPUstatistics cpuStatistics = new CPUstatistics("127.0.0.1");
         HTMLparser htmLparser = new HTMLparser();
 
-
+        //this is for NMS, however if you change the ip address the results are changed to corresponding ip address
         final JPanel panel = new JPanel(new GridBagLayout());
         final GridBagConstraints cs = new GridBagConstraints();
-
-        //ViewInit viewInit= new ViewInit();
 
         cs.fill = GridBagConstraints.HORIZONTAL;
 
@@ -83,7 +82,7 @@ public class ViewIds extends JFrame{
         cs.gridwidth = 1;
         panel.add(lbSysIp, cs);
 
-        String ips = null;
+        String ips = new String();
         for (String s : ipAddresses)
             ips += s + " ";
         System.out.println(ips);
@@ -183,9 +182,8 @@ public class ViewIds extends JFrame{
         cs.gridwidth = 2;
         panel.add(scpDisk, cs);
 
-        OntologyConnection connection = new OntologyConnection();
-        connection.uploadRDF(new File(connection.getWorkingDirectory()+"snmpids.owl"),
-                connection.serviceURIforData);
+
+
         ArrayList<String> processNames = new ArrayList<String>();
         ArrayList<String> processIds = new ArrayList<String>();
         ArrayList<ProcessStatistics.Process> processes = processStatistics.getProcessNames();
@@ -209,13 +207,18 @@ public class ViewIds extends JFrame{
             txaMalware.append("name: " + m.getName() + "\n");
         }
         //add detected to txaDetected
-        String matchQuery = "SELECT ?x \n WHERE {?x " + OntologyConnection.rdfType +
-                OntologyConnection.nameSpace+"Malware." +
-                "?y "+ OntologyConnection.rdfType + " " +
-                OntologyConnection.nameSpace + "Process." +
-                "?z +"+ OntologyConnection.nameSpace + "processName ?y." +
+        String matchQuery = OntologyConnection.prefixRDF + "\n"+
+                OntologyConnection.prefixSNMP + "\n" +
+                "SELECT ?x \n WHERE {?x " + OntologyConnection.rdfType + " snmp:Malware." +
+                "?y "+ OntologyConnection.rdfType + " snmp:Process." +
+                "?z snmp:processName ?y." +
                 "FILTER (?x = ?z)}";
-        connection.execSelectAndProcess(matchQuery);
+        ArrayList<String> results = connection.execSelectAndProcess(matchQuery);
+
+        for(String result: results)
+            txaDetected.append(result);
+        if (results.isEmpty() || results.get(0).equals(null) || results.get(0).equals(" "))
+            txaDetected.append("No intrusions detected on processes.");
 
         txaCpu.append("Percentage of system CPU: " + cpuStatistics.getPercentageOfSystemCPUtime() + "\n");
         txaCpu.append("Percentage of idle CPU: "  + cpuStatistics.getPercentageOfIdleCPUtime() + "\n");
@@ -239,7 +242,10 @@ public class ViewIds extends JFrame{
         txaDisk.append("Path of the device for the partition: " + diskStatistics.getPathOfTheDeviceForThePartition().get(0) + "\n");
         txaDisk.append("Used space on the disk: " + diskStatistics.getUsedSpaceOnTheDisk().get(0) + "\n");
         txaDisk.append("Percentage of used space on the disk: " + diskStatistics.getPercentagesOfSpaceUsedOnDisk().get(0) + "\n");
-        txaDisk.append("Percentage of inodes on the disk: " + diskStatistics.getPercentageOfInodesOnDisk().get(0));
+        txaDisk.append("Percentage of inodes on the disk: " + diskStatistics.getPercentageOfInodesOnDisk().get(0) + "\n");
+
+        TcpDump tcpDump = new TcpDump();
+        ArrayList<String> connectedIps = tcpDump.getPackets();
 
         panel.setBorder(new LineBorder(Color.GRAY));
         getContentPane().add(panel, BorderLayout.CENTER);

@@ -33,13 +33,17 @@ public class OntologyConnection {
     public OntologyConnection() throws IOException {
 
         String inputFileName = getWorkingDirectory()+"/snmpids.owl";
+        System.out.println(getWorkingDirectory());
         OntModel model = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM, null); //initialize without reasoner
         InputStream in = FileManager.get().open(inputFileName);
         model.read(in, null);
         if (model == null){
             throw new IllegalArgumentException("File "+ inputFileName + " not found! Please check the directory and try again.");
         }
-        FileOutputStream modelToWrite = null;
+        /**the below commented code has to run when the websites add new items, for now they are all in ontology
+        a code will be created for updating automatically later***/
+
+        /*FileOutputStream modelToWrite = null;
 
         //add malwares and badinternet domains
 
@@ -58,6 +62,7 @@ public class OntologyConnection {
         OntProperty reverseLookupAddress = model.getOntProperty(nameSpace + "reverseLookupAddress");
 
         for (Malware m : malwares){
+            modelToWrite = new FileOutputStream(inputFileName);
             Individual individual = model.createIndividual(nameSpace + m.getName(), malware);
             individual.addProperty(type, m.getType());
             individual.addProperty(discoveryDate, m.getDiscoveryDate());
@@ -65,6 +70,7 @@ public class OntologyConnection {
         }
 
         for (BadDomain bd : badDomains) {
+            modelToWrite = new FileOutputStream(inputFileName);
             Individual individual = model.createIndividual(nameSpace + bd.getIpAddress(), badInternetDomain);
             individual.addProperty(discoveryDate, bd.getDateOfDiscovery());
             individual.addProperty(asn, bd.getAsn());
@@ -76,10 +82,10 @@ public class OntologyConnection {
             }
             model.write(modelToWrite, "RDF/XML");
         }
-        modelToWrite.flush();
+        modelToWrite.flush();*/
     }
 
-    public void uploadRDF(File rdf , String URI)
+    public static void uploadRDF(File rdf , String URI)
             throws IOException {
 
         // parse the file
@@ -94,6 +100,7 @@ public class OntologyConnection {
         // upload the resulting model
         DatasetAccessor accessor = DatasetAccessorFactory.createHTTP(URI);
         accessor.putModel(m);
+        System.out.println("RDF uploaded");
 
     }
 
@@ -114,17 +121,20 @@ public class OntologyConnection {
 
     }
 
-    public void execSelectAndProcess(String query) {
+    public ArrayList<String> execSelectAndProcess(String query) {
         QueryExecution q = QueryExecutionFactory.sparqlService(serviceURIforSelect,
                 query);
-        ResultSet results = q.execSelect();
-
-        while (results.hasNext()) {
-            QuerySolution soln = results.nextSolution();
+        ResultSet rs = q.execSelect();
+        ArrayList<String> results = new ArrayList<String>();
+        while (rs.hasNext()) {
+            QuerySolution soln = rs.nextSolution();
             // assumes that you have an "?x" in your query
             RDFNode x = soln.get("x");
-            System.out.println(x);
+            //System.out.println(x);
+            results.add(x.toString().replace(nameSpace, ""));
+            System.out.println(x.toString().replace(nameSpace, ""));
         }
+        return results;
     }
 
     public void insertIndividuals (ArrayList<String> instances, String className) {
@@ -136,7 +146,7 @@ public class OntologyConnection {
         for (String instance : instances ){
             queryMid+= "<" + nameSpace+instance + "> " + rdfType+ " snmp:" + className + ".\n";
         }
-        System.out.println(queryBeginning+ queryMid+ queryEnding);
+        //System.out.println(queryBeginning+ queryMid+ queryEnding);
         UpdateRequest update = UpdateFactory.create(queryBeginning + queryMid + queryEnding);
         UpdateProcessor processor = UpdateExecutionFactory.createRemote(update,
                 serviceURIforUpdate);
@@ -206,28 +216,29 @@ public class OntologyConnection {
     }
 
 
-    /*public static void main(String argv[]) throws IOException {
+    public static void main(String argv[]) throws IOException {
         OntologyConnection oc = new OntologyConnection();
-        HTMLparser htmLparser = new HTMLparser();
-        ProcessStatistics ps = new ProcessStatistics("192.168.43.130");
+        //HTMLparser htmLparser = new HTMLparser();
+        //ProcessStatistics ps = new ProcessStatistics("192.168.43.130");
         //ArrayList<String> badIPs = htmLparser.getHTMLcontentOfBadIpCom();
         //ArrayList<Malware> malwaresOfSymantec = htmLparser.getHMTLcontentOfSymantecCom();
         //ArrayList<BadDomain> badIPsOfDomainList = htmLparser.getHTMLcontentOfMalwareDomainListCom();
-        ps.getProcessNames();
+        //ps.getProcessNames();
         //ArrayList<String> processDirs = ps.getProcessRunDirectories();
 
 
-        uploadRDF(new File(oc.getWorkingDirectory()+"snmpids.owl"),
+        uploadRDF(new File(oc.getWorkingDirectory()+"/snmpids.owl"),
                 serviceURIforData);
         ArrayList<String> n = new ArrayList<String>();
         n.add("2.2.2.2");
         n.add("1.1.1.1");
         n.add("127.0.0.1");
         n.add("0.0.0.0");
-        //insertIndividuals(n, "Agent");
-        //execSelectAndProcess(prefixSNMP + prefixRDF + "SELECT ?s WHERE {?s rdf:type snmp:Agent}");
-        //deleteIndividuals(n, "Agent");
-        //execSelectAndProcess(prefixSNMP + prefixRDF +
-                //"SELECT ?s WHERE {?s rdf:type snmp:Agent}");
-    }*/
+        oc.insertIndividuals(n, "Agent");
+        oc.execSelectAndProcess(prefixSNMP + "\n" + prefixRDF + "\nSELECT ?x WHERE {?x rdf:type snmp:Agent.}");
+        oc.execSelectAndProcess(prefixSNMP + "\n" + prefixRDF + "\nSELECT ?x WHERE {?x rdf:type snmp:Malware.}");
+        oc.deleteIndividuals(n, "Agent");
+        oc.execSelectAndProcess(prefixSNMP + "\n" +prefixRDF +
+                "\nSELECT ?x WHERE {?x rdf:type snmp:Agent.}");
+    }
 }
