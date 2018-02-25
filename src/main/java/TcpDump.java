@@ -1,3 +1,4 @@
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -46,29 +47,30 @@ public class TcpDump {
         setStop(false);
         setProc(proc);
         BufferedReader r = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-        String regexPattern = "((?<=IP )\\S+(?= >))|(?<=> )\\d.+(?=:)";
+        String regexPattern = "\\b\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\b";
+        //String regexPattern = "((?<=IP )\\S+(?= >))|(?<=> )\\d.+(?=: )"; //gets ip addresses with their ports
         Pattern pattern = Pattern.compile(regexPattern); //"/([A-z])+\\w(?=\")/g"  \S+(?=\")(?<=\")
         String line;
         System.out.println("Parsing...");
-
+        int i = 0;
         while ((line = r.readLine()) != null ) {
             Matcher matcher = pattern.matcher(line);
-            System.out.println("Control:" + line);
+            //System.out.println(line);
             while (matcher.find()) {
-                while (!stop) {
-                    System.out.println(matcher.group().substring(0,matcher.group().length()));
-                    ips.add((matcher.group().substring(0, matcher.group().length())));
+                String temp = matcher.group().substring(0, matcher.group().length());
+                //System.out.println(temp);
+                ips.add(temp);
+                if (isEven(i)){
+                    System.out.println("source ip: " + temp);
                 }
+                else{
+                    System.out.println("dest ip: " + temp);
+                }
+
+                i++;
             }
         }
-        int i = 0;
-        for (String ip : ips){
-            if (isEven(i))
-                System.out.println(i + "th" + " source ip: " + ip);
-            else
-                System.out.println(i + "th" + "dest ip: " + ip);
-            i++;
-        }
+
         return ips;
     }
 
@@ -86,20 +88,6 @@ public class TcpDump {
         proc.destroy();
     }
 
-    public static String getWorkingDirectory () throws IOException {
-        String[] args = new String[] {"/bin/bash", "-c", "pwd"};
-        Process proc = new ProcessBuilder(args).start();
-        BufferedReader r = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-        String line;
-        String result = null;
-
-        while ((line = r.readLine()) != null ) {
-            result = line;
-            //System.out.println(line);
-        }
-        return result;
-    }
-
     public static void main (String[] args) throws IOException {
         TcpDump tcpDump =  new TcpDump();
         tcpDump.setNifName("wlan1");
@@ -109,6 +97,6 @@ public class TcpDump {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        tcpDump.stopTcpDump(tcpDump.getProc());
+        //tcpDump.stopTcpDump(tcpDump.getProc());
     }
 }

@@ -1,10 +1,21 @@
+import com.sun.xml.internal.bind.v2.TODO;
+
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ViewIds extends JFrame{
 
@@ -19,32 +30,50 @@ public class ViewIds extends JFrame{
     private JLabel lbCpu;
     private JLabel lbMemory;
     private JLabel lbDisk;
+    private JLabel lbConnections;
     private JTextArea txaProcess;
     private JTextArea txaMalware;
     private JTextArea txaDetected;
     private JTextArea txaCpu;
     private JTextArea txaMemory;
     private JTextArea txaDisk;
+    private JTextArea txaConnections;
     private JScrollPane scpProcess;
     private JScrollPane scpMalware;
     private JScrollPane scpDetected;
     private JScrollPane scpCpu;
     private JScrollPane scpMemory;
     private JScrollPane scpDisk;
+    private JScrollPane scpConnections;
+    private JButton btnStop;
+    private JButton btnStart;
+    private final Border border =
+            BorderFactory.createLoweredBevelBorder();
+    private JPanel panel;
+    OntologyConnection connection;
 
-    public ViewIds (ArrayList<String> ipAddresses) throws IOException {
+
+    /**TO DO
+     * define ontologyConnection at first
+     * send every process to swing builder
+     * get ips and analyze
+     * somehow enable stop capturing
+     * */
+
+
+    public ViewIds (JFrame frame, ArrayList<String> ipAddresses) throws IOException {
         //get ip addresses
         //create a dropdown menu
         //for each ip address, reload the page and show info of that ip address
         //for now only ip is 127.0.0.1
-        OntologyConnection connection = new OntologyConnection();
+        connection = new OntologyConnection();
         String[] args = new String[] {"/bin/bash", "-c", connection.getWorkingDirectory() +"./fuseki.sh"};
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        Process proc = new ProcessBuilder(args).start();
+        final Process[] proc = {new ProcessBuilder(args).start()};
         SystemInformation systemInformation = new SystemInformation("127.0.0.1");
         ProcessStatistics processStatistics = new ProcessStatistics("127.0.0.1");
         MemoryStatistics memoryStatistics = new MemoryStatistics("127.0.0.1");
@@ -53,7 +82,7 @@ public class ViewIds extends JFrame{
         HTMLparser htmLparser = new HTMLparser();
 
         //this is for NMS, however if you change the ip address the results are changed to corresponding ip address
-        final JPanel panel = new JPanel(new GridBagLayout());
+        panel = new JPanel(new GridBagLayout());
         final GridBagConstraints cs = new GridBagConstraints();
 
         cs.fill = GridBagConstraints.HORIZONTAL;
@@ -102,6 +131,7 @@ public class ViewIds extends JFrame{
         txaProcess.setEditable(false);
         txaProcess.setBackground(Color.white);
         scpProcess = new JScrollPane(txaProcess);
+        scpProcess.setBorder(border);
         cs.gridx = 0;
         cs.gridy = 6;
         cs.gridwidth = 1;
@@ -117,6 +147,7 @@ public class ViewIds extends JFrame{
         txaMalware.setEditable(false);
         txaMalware.setBackground(Color.gray);
         scpMalware = new  JScrollPane(txaMalware);
+        scpMalware.setBorder(border);
         cs.gridx = 1;
         cs.gridy = 6;
         cs.gridwidth = 2;
@@ -132,6 +163,7 @@ public class ViewIds extends JFrame{
         txaDetected.setEditable(false);
         txaDetected.setBackground(Color.red);
         scpDetected = new JScrollPane(txaDetected);
+        scpDetected.setBorder(border);
         cs.gridx = 3;
         cs.gridy = 6;
         cs.gridwidth = 2;
@@ -147,6 +179,7 @@ public class ViewIds extends JFrame{
         txaCpu.setEditable(false);
         txaCpu.setBackground(Color.gray);
         scpCpu = new JScrollPane(txaCpu);
+        scpCpu.setBorder(border);
         cs.gridx = 0;
         cs.gridy = 9;
         cs.gridwidth = 1;
@@ -162,6 +195,7 @@ public class ViewIds extends JFrame{
         txaMemory.setEditable(false);
         txaMemory.setBackground(Color.white);
         scpMemory = new JScrollPane(txaMemory);
+        scpMemory.setBorder(border);
         cs.gridx = 1;
         cs.gridy = 9;
         cs.gridwidth = 2;
@@ -182,7 +216,35 @@ public class ViewIds extends JFrame{
         cs.gridwidth = 2;
         panel.add(scpDisk, cs);
 
+        lbConnections = new JLabel("Connections");
+        cs.gridx = 5;
+        cs.gridy = 5;
+        cs.gridwidth = 1;
+        panel.add(lbConnections, cs);
 
+        txaConnections = new JTextArea(20,30);
+        txaConnections.setEditable(false);
+        txaConnections.setBackground(Color.lightGray);
+        scpConnections = new JScrollPane(txaConnections);
+        scpConnections.setBorder(border);
+        cs.gridx = 5;
+        cs.gridy = 6;
+        cs.gridwidth = 1;
+        panel.add(scpConnections, cs);
+
+        btnStop = new JButton("Stop capturing");
+        cs.gridx = 5;
+        cs.gridy = 4;
+        cs.gridwidth = 1;
+        panel.add(btnStop, cs);
+
+        btnStart = new JButton("Start capturing");
+        cs.gridx = 5;
+        cs.gridy = 3;
+        cs.gridwidth = 1;
+        panel.add(btnStart, cs);
+
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         ArrayList<String> processNames = new ArrayList<String>();
         ArrayList<String> processIds = new ArrayList<String>();
@@ -244,9 +306,25 @@ public class ViewIds extends JFrame{
         txaDisk.append("Percentage of used space on the disk: " + diskStatistics.getPercentagesOfSpaceUsedOnDisk().get(0) + "\n");
         txaDisk.append("Percentage of inodes on the disk: " + diskStatistics.getPercentageOfInodesOnDisk().get(0) + "\n");
 
-        TcpDump tcpDump = new TcpDump();
-        ArrayList<String> connectedIps = tcpDump.getPackets();
+        //txaConnections
+        final TcpDumpWorker tcpDumpWorker = new TcpDumpWorker();
+        btnStart.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
 
+                tcpDumpWorker.execute();
+            }
+        });
+        btnStart.updateUI();
+
+
+        btnStop.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                //tcpDumpWorker.cancel();
+                tcpDumpWorker.cancel(true);
+            }
+        });
+        btnStop.updateUI();
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         panel.setBorder(new LineBorder(Color.GRAY));
         getContentPane().add(panel, BorderLayout.CENTER);
         pack();
@@ -254,9 +332,64 @@ public class ViewIds extends JFrame{
         //setLocationRelativeTo(parent);
     }
 
-   /* public static void main (String[] args) throws IOException {
-        ViewIds viewIds = new ViewIds();
+    private class TcpDumpWorker extends SwingWorker<Process, String> {
+        ArrayList<String> badips = connection.execSelectAndProcess(OntologyConnection.prefixSNMP +
+                "\n " + OntologyConnection.prefixRDF + "\n" + "SELECT ?x WHERE {?x rdf:type snmp:BadInternetDomain.}");
+
+        @Override
+        protected Process doInBackground() throws IOException {
+            String[] args1 = new String[] {"/bin/bash", "-c", "tcpdump -i wlan1" +" -n"};// -w" + getWorkingDirectory() + "/file.cap"};
+            Process proc = new ProcessBuilder(args1).start();
+            ArrayList<String> ips = new ArrayList<String>();
+            BufferedReader r = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+            String regexPattern = "\\b\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\b";
+            Pattern pattern = Pattern.compile(regexPattern); //"/([A-z])+\\w(?=\")/g"  \S+(?=\")(?<=\")
+            String line;
+            System.out.println("Parsing packets...");
+
+            while ((line = r.readLine()) != null ) {
+                Matcher matcher = pattern.matcher(line);
+                //System.out.println("Control:" + line);
+                while (matcher.find()) {
+                    //System.out.println(matcher.group().substring(0,matcher.group().length()));
+                    String temp = (matcher.group().substring(0, matcher.group().length()));
+                    publish("ip: " + temp + "\n");
+                    //ips.add(temp);
+                }
+            }
+            return proc;
+        }
+
+        @Override
+        protected void process (List<String> chunks) {
+
+            for (String s : chunks) {
+                txaConnections.append(s);
+                if (!s.startsWith("192.168.1")){
+                    for (String s1 : badips){
+                        if(s.equals(s1)){
+                            JOptionPane.showMessageDialog(panel, "detected bad ip connection: " + s);
+                        }
+                    }
+                }
+            }
+        }
+
+        @Override
+        protected void done() {
+
+
+        }
+
+    }
+
+
+    public static void main (String[] args) throws IOException {
+        JFrame frame = new JFrame("IDS");
+        ArrayList<String> ips = new ArrayList<String>();
+        ips.add("192.168.1.21");
+        ViewIds viewIds = new ViewIds(frame, ips);
         viewIds.setVisible(true);
-    }*/
+    }
 
 }

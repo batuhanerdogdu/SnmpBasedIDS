@@ -179,7 +179,7 @@ public class ViewLogin extends JDialog{
                                 OntologyConnection connection = new OntologyConnection();
                                 ArrayList<String> username = connection.execSelectAndProcess(OntologyConnection.prefixSNMP + "\n" + OntologyConnection.prefixRDF +
                                         "\nSELECT ?x WHERE {?x rdf:type snmp:Administrator.}");
-                                viewInit = new ViewInit(username.get(0));
+                                viewInit = new ViewInit(frame, username.get(0));
                             } catch (IOException e1) {
                                 e1.printStackTrace();
                             }

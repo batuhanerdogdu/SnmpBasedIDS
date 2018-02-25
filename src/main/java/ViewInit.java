@@ -30,7 +30,7 @@ public class ViewInit extends JFrame {
     final GridBagConstraints cs = new GridBagConstraints();
     final JFrame frame = new JFrame();
 
-    public ViewInit (String username) throws IOException {
+    public ViewInit (JFrame freme, String username) throws IOException {
         //super (parent, "Initialize", true);
 
         //ViewLogin login = new ViewLogin(parent);
@@ -164,7 +164,10 @@ public class ViewInit extends JFrame {
                     ipAddresses.add((matcher.group().substring(0, matcher.group().length())));
                     connection.insertIndividuals(ipAddresses, "Agent");
                 }
-                JOptionPane.showMessageDialog(panel, "Ip addresses successfully added!");
+                if (ipAddresses.isEmpty())
+                    JOptionPane.showMessageDialog(panel, "No IP address, added. IDS is opening...");
+                else
+                    JOptionPane.showMessageDialog(panel, "Ip addresses successfully added!");
                 try {
                     dispose();
                 } catch (Exception e1) {
@@ -172,7 +175,7 @@ public class ViewInit extends JFrame {
                 }
                 //panel.setVisible(false);
                 try {
-                    ViewIds ids = new ViewIds(ipAddresses);
+                    ViewIds ids = new ViewIds(frame, ipAddresses);
                     ids.setVisible(true);
                 } catch (IOException e1) {
                     e1.printStackTrace();
@@ -182,6 +185,7 @@ public class ViewInit extends JFrame {
         cs.gridy = 4;
         cs.gridx = 1;
         panel.add(btnSubmit, cs);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         panel.setBorder(new LineBorder(Color.GRAY));
         getContentPane().add(panel, BorderLayout.CENTER);
