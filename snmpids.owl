@@ -61,6 +61,24 @@
     
 
 
+    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#isAbout -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#isAbout">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Alert"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Agent"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#isCausedBy -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#isCausedBy">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Alert"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Agent"/>
+    </owl:ObjectProperty>
+    
+
+
     <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#isConnectedTo -->
 
     <owl:ObjectProperty rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#isConnectedTo">
@@ -584,6 +602,12 @@
     <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Agent -->
 
     <owl:Class rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Agent"/>
+    
+
+
+    <!-- http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Alert -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/b/ontologies/2018/0/IdsSNMP#Alert"/>
     
 
 

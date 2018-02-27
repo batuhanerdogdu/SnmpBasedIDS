@@ -36,7 +36,7 @@ public class SystemInformation extends Statistics {
     public  String getIpAddress () throws  IOException {
         ArrayList<String> ipAddresses = new ArrayList<String>();
         String ipAddress = new String();
-        String command = "ifconfig wlan1";
+        String command = "ifconfig";
         String regexPattern = "(?<= inet addr:)\\S+";
         String[] args = new String[] {"/bin/bash", "-c", command};
         Process proc = new ProcessBuilder(args).start();

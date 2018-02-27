@@ -169,6 +169,16 @@ public class OntologyConnection {
         processor.execute();
     }
 
+    public void insertObjectProperties (String domainClassInstanceName, String opName, String rangeClassInstanceName) {
+        String query = prefixSNMP + " " + prefixRDF + " " + prefixRDFS + " "+
+                prefixOWL + " " + prefixXML + " " + prefixXSD +" " + "\n" + "INSERT DATA " +
+                " { " + domainClassInstanceName + " snmp:" + opName + " " +rangeClassInstanceName;
+        UpdateRequest update = UpdateFactory.create(query);
+        UpdateProcessor processor = UpdateExecutionFactory.createRemote(update,
+                serviceURIforUpdate);
+        processor.execute();
+    }
+
     public void insertDataProperties (String instanceName, String propertyName, ArrayList<String> properties){
         String queryBeginning = prefixSNMP + " " + prefixRDF + " " + prefixRDFS + " "+
                 prefixOWL + " " + prefixXML + " " + prefixXSD +" " + "\n" + "INSERT DATA " +

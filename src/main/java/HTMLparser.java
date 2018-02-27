@@ -1,3 +1,4 @@
+import org.apache.jena.base.Sys;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -13,9 +14,10 @@ public class HTMLparser  {
         HTMLparser htmlParser = new HTMLparser();
         //htmlParser.getHTMLcontentOfMalwareDomainListCom();
         //htmlParser.getHTMLcontentOfMcAfeeCom();
-        //htmlParser.getHTMLcontentOfMalwareDomainListCom();
+        htmlParser.getHMTLcontentOfSymantecCom();
         //htmlParser.getHTMLcontentOfBadIpCom();
-        htmlParser.getAllBadDomains();
+        //htmlParser.getAllBadDomains();
+
     }
 
     //url is the html file's url, part is the required html part (e.g <br>)
@@ -184,75 +186,77 @@ public class HTMLparser  {
     }
 
     public ArrayList<Malware> getHMTLcontentOfSymantecCom () throws IOException {
-        String url = "https://www.mcafee.com/threat-intelligence/malware/latest.aspx?region=us"; //this website wont allow to parse contents
-        String url2 ="https://www.symantec.com/security_response/landing/azlisting.jsp";
-        Document document = Jsoup.connect(url2).timeout(10*10000).get();
-        Elements elements = document.getElementsByTag("tbody");
-        Elements rows =  elements.select("tr");
+        //String url = "https://www.mcafee.com/threat-intelligence/malware/latest.aspx?region=us"; //this website wont allow to parse contents
+        //String url2 ="https://www.symantec.com/security_response/landing/azlisting.jsp";
+        String rawUrl = "https://www.symantec.com/security-center/a-z/";
         ArrayList<Malware> malwares = new ArrayList<Malware>();
-        rows.remove(0); //remove the table header row
+        ArrayList<String> urls = new ArrayList<String>();
+        for (char s = 'A'; s<= 'Z'; s++){
+            urls.add(rawUrl+s);
+            System.out.println(rawUrl+s);
+        }
+        urls.add(rawUrl+"_1234567890");
+        for (String url : urls) {
+            Document document = Jsoup.connect(url).timeout(10*10000).get();
+            Elements elements = document.getElementsByTag("tbody"); //PARSING NEEDS MORE WORK
+            Elements rows =  elements.select("tr");
+            System.out.println("Parsing: " + url);
+            //rows.remove(0); //remove the table header row
 
-        for (Element row : rows){
-            Elements columns = row.getElementsByTag("td");
-            ArrayList<String> temp = new ArrayList<String>();
-            for (Element column : columns) {
-                //System.out.println("-" + column);
-                if (column.text().equals("Symantec AntiVirus detections (1059)") ||
-                        column.text().equals("\n") || column.text().equals("")){
-                    continue;
-                }else if (column.text().startsWith("(These threats are also detected by the latest Virus Definitions.)")){
-                    String tempStr = column.text().replace(
-                            "(These threats are also detected by the latest Virus Definitions.)",
-                            "");
-                    //System.out.println(tempStr);
-                    String str = tempStr.replace(' ', '_');
+            for (Element row : rows){
+                Elements columns = row.getElementsByTag("td");
+                ArrayList<String> temp = new ArrayList<String>();
+                for (Element column : columns) {
+                    //System.out.println("-" + column);
                     String regexPattern = "\\S+";
-                    Pattern pattern = Pattern.compile(regexPattern); //"/([A-z])+\\w(?=\")/g"  \S+(?=\")(?<=\")
-                    Matcher matcher = pattern.matcher(str);
+                    Pattern pattern = Pattern.compile(regexPattern);
+                    Matcher matcher = pattern.matcher(column.text());
                     while (matcher.find()) {
                         //System.out.println(matcher.group().substring(0,matcher.group().length()));
-                        temp.add((matcher.group().substring(0, matcher.group().length())));
+                        temp.add((matcher.group().substring(0, matcher.group().length()))); // remove known words like worm, android, adware etc...
                     }
-
-                }else {
-                    //System.out.println("----" + column.text().replace(' ', '_'));
-                    temp.add(column.text().replace(' ', '_'));
                 }
-
-            }
-            if (temp.size()==1){
-                Malware m = new Malware();
-                m.setName(temp.get(0));
-                m.setType("Other");
-                m.setDiscoveryDate("Unknown");
-                malwares.add(m);
-            }else if (temp.size()==2){
-                Malware m = new Malware();
-                m.setName(temp.get(0));
-                m.setType(temp.get(1));
-                m.setDiscoveryDate("Unknown");
-                malwares.add(m);
-            }else if (temp.size()==3){
-                Malware m = new Malware();
-                m.setName(temp.get(0));
-                m.setType(temp.get(1));
-                m.setDiscoveryDate(temp.get(2));
-                malwares.add(m);
-            }else if (temp.size()>3){
-                for (String t : temp){
+                if (temp.size()==1){
                     Malware m = new Malware();
-                    m.setName(t);
+                    m.setName(temp.get(0));
                     m.setType("Other");
                     m.setDiscoveryDate("Unknown");
                     malwares.add(m);
+                }else if (temp.size()==2){
+                    Malware m = new Malware();
+                    m.setName(temp.get(0));
+                    m.setType(temp.get(1));
+                    m.setDiscoveryDate("Unknown");
+                    malwares.add(m);
+                }else if (temp.size()==3){
+                    Malware m = new Malware();
+                    m.setName(temp.get(0));
+                    m.setType(temp.get(1));
+                    m.setDiscoveryDate(temp.get(2));
+                    malwares.add(m);
+                }else if (temp.size()>3){
+                    for (String t : temp){
+                        Malware m = new Malware();
+                        m.setName(t);
+                        m.setType("Other");
+                        m.setDiscoveryDate("Unknown");
+                        malwares.add(m);
+                    }
                 }
-            }
 
+            }
         }
-        /*for (Malware mal : malwares){
-            System.out.println("Malware Name: "+ mal.getName() + "    Type: "+ mal.getType()+ " Discovery date: "+ mal.getDiscoveryDate());
-            System.out.println("-----------------------------------------------------------------------------------------------");
+
+        /*for (Element l : latest) {
+            System.out.println(latest.text() + "\n");
         }*/
+        int i = 0;
+        for (Malware mal : malwares){
+            System.out.println("Malware Name: "+ mal.getName() + "    Type: "+ mal.getType()+ " Discovery date: "+ mal.getDiscoveryDate());
+            //System.out.println("-----------------------------------------------------------------------------------------------");
+            i++;
+        }
+        System.out.println(i + " malwares parsed.");
         return malwares;
     }
 

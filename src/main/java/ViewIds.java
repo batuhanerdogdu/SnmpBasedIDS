@@ -1,4 +1,5 @@
 import com.sun.xml.internal.bind.v2.TODO;
+import org.apache.jena.riot.lang.SinkTriplesToGraph;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -10,7 +11,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -51,6 +55,10 @@ public class ViewIds extends JFrame{
             BorderFactory.createLoweredBevelBorder();
     private JPanel panel;
     OntologyConnection connection;
+    SystemInformation systemInformation;
+    private static final DateFormat sdf = new SimpleDateFormat("yyyy/MM/dd_HH:mm:ss");
+
+
 
 
     /**TO DO
@@ -74,12 +82,8 @@ public class ViewIds extends JFrame{
             e.printStackTrace();
         }
         final Process[] proc = {new ProcessBuilder(args).start()};
-        SystemInformation systemInformation = new SystemInformation("127.0.0.1");
-        ProcessStatistics processStatistics = new ProcessStatistics("127.0.0.1");
-        MemoryStatistics memoryStatistics = new MemoryStatistics("127.0.0.1");
-        DiskStatistics diskStatistics = new DiskStatistics("127.0.0.1");
-        CPUstatistics cpuStatistics = new CPUstatistics("127.0.0.1");
-        HTMLparser htmLparser = new HTMLparser();
+        systemInformation = new SystemInformation("127.0.0.1");
+
 
         //this is for NMS, however if you change the ip address the results are changed to corresponding ip address
         panel = new JPanel(new GridBagLayout());
@@ -244,73 +248,37 @@ public class ViewIds extends JFrame{
         cs.gridwidth = 1;
         panel.add(btnStart, cs);
 
+        JProgressBar jpbDisk = new JProgressBar();
+        panel.add(jpbDisk);
+
+        frame.add(panel);
+
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        ArrayList<String> processNames = new ArrayList<String>();
-        ArrayList<String> processIds = new ArrayList<String>();
-        ArrayList<ProcessStatistics.Process> processes = processStatistics.getProcessNames();
-
-        for (ProcessStatistics.Process process: processes){
-            processIds.add(process.getId());
-        }
-        connection.insertIndividuals(processIds, "Process");
-
-        for (ProcessStatistics.Process process : processes) {
-            txaProcess.append("id: " + process.getId() + " name: " + process.getName() + "\n");
-            processNames.add(process.getName());
-            ArrayList<String> name = new ArrayList<String>();
-            name.add(process.getName());
-            connection.insertDataProperties(process.getId(), "processName", name);
-        }
-
-        //add malwares to txaMalwares
-        ArrayList<Malware> malwares = htmLparser.getHMTLcontentOfSymantecCom();
-        for (Malware m : malwares) {
-            txaMalware.append("name: " + m.getName() + "\n");
-        }
-        //add detected to txaDetected
-        String matchQuery = OntologyConnection.prefixRDF + "\n"+
-                OntologyConnection.prefixSNMP + "\n" +
-                "SELECT ?x \n WHERE {?x " + OntologyConnection.rdfType + " snmp:Malware." +
-                "?y "+ OntologyConnection.rdfType + " snmp:Process." +
-                "?z snmp:processName ?y." +
-                "FILTER (?x = ?z)}";
-        ArrayList<String> results = connection.execSelectAndProcess(matchQuery);
-
-        for(String result: results)
-            txaDetected.append(result);
-        if (results.isEmpty() || results.get(0).equals(null) || results.get(0).equals(" "))
-            txaDetected.append("No intrusions detected on processes.");
-
-        txaCpu.append("Percentage of system CPU: " + cpuStatistics.getPercentageOfSystemCPUtime() + "\n");
-        txaCpu.append("Percentage of idle CPU: "  + cpuStatistics.getPercentageOfIdleCPUtime() + "\n");
-        txaCpu.append("Raw System CPU:" + cpuStatistics.getRawSystemCPUtime() + "\n");
-        txaCpu.append("Raw idle CPU: " + cpuStatistics.getRawIdleCPUtime() + "\n");
-        txaCpu.append("Raw user CPU: " + cpuStatistics.getRawUserCPUtime());
-        txaCpu.append("1 minute load: " + cpuStatistics.get1MinuteLoad() + "\n");
-        txaCpu.append("5 minute load: " + cpuStatistics.get5MinuteLoad() + "\n");
-        txaCpu.append("15 Minute load: " + cpuStatistics.get15MinuteLoad() + "\n");
-
-        txaMemory.append("Total RAM: " + memoryStatistics.getTotalRAMinMachine() + "\n");
-        txaMemory.append("Available swap space: " + memoryStatistics.getAvailableSwapSpace() + "\n");
-        txaMemory.append("Total cached memory: " + memoryStatistics.getTotalCachedMemory() + "\n");
-        txaMemory.append("Total RAM buffered: " + memoryStatistics.getTotalRAMBuffered() + "\n");
-        txaMemory.append("Total RAM free: " + memoryStatistics.getTotalRAMfree() + "\n");
-        txaMemory.append("Total RAM shared: " + memoryStatistics.getTotalRAMshared() + "\n");
-        txaMemory.append("Total RAM used: " + memoryStatistics.getTotalRAMused() + "\n");
-
-        txaDisk.append("Total disk size: " + diskStatistics.getTotalSizeOfTheDiskOrPartition().get(0) + "\n");
-        txaDisk.append("Path where the disk is mounted: " + diskStatistics.getPathWhereDiskIsMounted().get(0) + "\n");
-        txaDisk.append("Path of the device for the partition: " + diskStatistics.getPathOfTheDeviceForThePartition().get(0) + "\n");
-        txaDisk.append("Used space on the disk: " + diskStatistics.getUsedSpaceOnTheDisk().get(0) + "\n");
-        txaDisk.append("Percentage of used space on the disk: " + diskStatistics.getPercentagesOfSpaceUsedOnDisk().get(0) + "\n");
-        txaDisk.append("Percentage of inodes on the disk: " + diskStatistics.getPercentageOfInodesOnDisk().get(0) + "\n");
-
         //txaConnections
+
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        panel.setBorder(new LineBorder(Color.GRAY));
+        getContentPane().add(panel, BorderLayout.CENTER);
+        pack();
+        setResizable(true);
+        //setLocationRelativeTo(parent);
+
+        final DiskWorker diskWorker = new DiskWorker();
+        diskWorker.execute();
+        final MemWorker memWorker = new MemWorker();
+        memWorker.execute();
+        final ProcessWorker processWorker = new ProcessWorker();
+        processWorker.execute();
+        final CpuWorker cpuWorker = new CpuWorker();
+        cpuWorker.execute();
+        final DetectionWorker detectionWorker = new DetectionWorker();
+        detectionWorker.execute();
+        final MalwareWorker malwareWorker = new MalwareWorker();
+        malwareWorker.execute();
         final TcpDumpWorker tcpDumpWorker = new TcpDumpWorker();
         btnStart.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-
                 tcpDumpWorker.execute();
             }
         });
@@ -324,20 +292,297 @@ public class ViewIds extends JFrame{
             }
         });
         btnStop.updateUI();
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        panel.setBorder(new LineBorder(Color.GRAY));
-        getContentPane().add(panel, BorderLayout.CENTER);
-        pack();
-        setResizable(true);
-        //setLocationRelativeTo(parent);
     }
 
-    private class TcpDumpWorker extends SwingWorker<Process, String> {
+    private class ProcessWorker extends SwingWorker <String, String> {
+
+        @Override
+        protected String doInBackground () throws IOException {
+            ArrayList<String> processNames = new ArrayList<String>();
+            ArrayList<String> processIds = new ArrayList<String>();
+            ProcessStatistics processStatistics = new ProcessStatistics("127.0.0.1");
+            ArrayList<ProcessStatistics.Process> processes = processStatistics.getProcessNames();
+            for (ProcessStatistics.Process process: processes){
+                processIds.add(process.getId());
+            }
+            connection.insertIndividuals(processIds, "Process");
+            for (ProcessStatistics.Process process : processes) {
+                publish("id: " + process.getId() + " name: " + process.getName() + "\n");
+                processNames.add(process.getName());
+                ArrayList<String> name = new ArrayList<String>();
+                name.add(process.getName());
+                connection.insertDataProperties(process.getId(), "processName", name);
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+        @Override
+        protected void process (List<String> chunks) {
+            for (String s: chunks)
+                txaProcess.append(s);
+        }
+        @Override
+        protected  void done () {}
+    }
+
+    private class MemWorker extends SwingWorker<String, String> {
+        @Override
+        protected String doInBackground () throws IOException {
+            MemoryStatistics memoryStatistics = new MemoryStatistics("127.0.0.1");
+            publish("Total RAM: " + memoryStatistics.getTotalRAMinMachine() + "\n");
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            publish("Available swap space: " + memoryStatistics.getAvailableSwapSpace() + "\n");
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            publish("Total cached memory: " + memoryStatistics.getTotalCachedMemory() + "\n");
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            publish("Total RAM buffered: " + memoryStatistics.getTotalRAMBuffered() + "\n");
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            publish("Total RAM free: " + memoryStatistics.getTotalRAMfree() + "\n");
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            publish("Total RAM shared: " + memoryStatistics.getTotalRAMshared() + "\n");
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            publish("Total RAM used: " + memoryStatistics.getTotalRAMused() + "\n");
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return null;
+
+        }
+        @Override
+        protected void process (List<String> chunks) {
+
+            for (String s: chunks)
+                txaMemory.append(s);
+        }
+        @Override
+        protected  void done () {}
+    }
+
+    private class DiskWorker extends SwingWorker<String, String> {
+        @Override
+        protected String doInBackground () throws IOException {
+            DiskStatistics diskStatistics = new DiskStatistics("127.0.0.1");
+            String temp1 = diskStatistics.getPathWhereDiskIsMounted().get(0);
+            publish("Total disk size: " + temp1 + "\n");
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            String temp2 = diskStatistics.getPathWhereDiskIsMounted().get(0);
+            publish("Path where the disk is mounted: " + temp2 + "\n");
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            String temp3  = diskStatistics.getPathOfTheDeviceForThePartition().get(0);
+            publish("Path of the device for the partition: " + temp3 + "\n");
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            String temp4 = diskStatistics.getUsedSpaceOnTheDisk().get(0).toString();
+            publish("Used space on the disk: " + temp4 + "\n");
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            String temp5 = diskStatistics.getPercentagesOfSpaceUsedOnDisk().get(0).toString();
+            publish("Percentage of used space on the disk: " + temp5 + "\n");
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            String temp6 = diskStatistics.getPercentageOfInodesOnDisk().get(0).toString();
+            publish("Percentage of inodes on the disk: " + temp6 + "\n");
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+        @Override
+        protected void process (List<String> chunks) {
+            for (String s : chunks) {
+                txaDisk.append(s);
+            }
+        }
+        @Override
+        protected void done () {
+        }
+    }
+
+    private class DetectionWorker extends  SwingWorker<String, String> {
+
+        @Override
+        protected String doInBackground() {
+
+            String matchQuery = OntologyConnection.prefixRDF + "\n"+
+                    OntologyConnection.prefixSNMP + "\n" +
+                    "SELECT ?x \n WHERE {?x " + OntologyConnection.rdfType + " snmp:Malware." +
+                    "?y "+ OntologyConnection.rdfType + " snmp:Process." +
+                    "?z snmp:processName ?y." +
+                    "FILTER (?x = ?z)}";
+            ArrayList<String> results = connection.execSelectAndProcess(matchQuery);
+            ArrayList<String> alerts = new ArrayList<String>();
+            Date date = new Date();
+            String s = sdf.format(date).toString();
+            alerts.add(s);
+            connection.insertIndividuals(alerts, "Alert");
+            try {
+                connection.insertObjectProperties("Alert", "isAbout", systemInformation.getIpAddress());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            for(String result: results)
+                publish(result);
+            if (results.isEmpty() || results.get(0).equals(null)  || results.get(0).equals(" "))
+                publish("No intrusions detected on processes.");
+            return null;
+        }
+        @Override
+        protected void process (List<String> chunks) {
+            for (String s: chunks)
+                txaDetected.append(s);
+        }
+    }
+
+    private class MalwareWorker extends SwingWorker<String, String> {
+
+        HTMLparser htmLparser = new HTMLparser();
+
+        private MalwareWorker() throws IOException {
+        }
+
+        @Override
+        protected String doInBackground () throws IOException {
+            ArrayList<Malware> malwares = htmLparser.getHMTLcontentOfSymantecCom();
+
+            for (Malware m : malwares) {
+                publish("name: " + m.getName() + "\n");
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            return null;
+        }
+        @Override
+        protected void process (List<String> chunks) {
+            for (String s: chunks)
+                txaMalware.append(s);
+        }
+
+
+    }
+
+    private class CpuWorker extends SwingWorker<String, String> {
+
+        @Override
+        protected String doInBackground () throws IOException {
+            CPUstatistics cpuStatistics = new CPUstatistics("127.0.0.1");
+            publish("Percentage of system CPU: " + cpuStatistics.getPercentageOfSystemCPUtime() + "\n");
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            publish("Percentage of idle CPU: "  + cpuStatistics.getPercentageOfIdleCPUtime() + "\n");
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            publish("Raw System CPU:" + cpuStatistics.getRawSystemCPUtime() + "\n");
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            publish("Raw idle CPU: " + cpuStatistics.getRawIdleCPUtime() + "\n");
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            publish("Raw user CPU: " + cpuStatistics.getRawUserCPUtime());
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            publish("1 minute load: " + cpuStatistics.get1MinuteLoad() + "\n");
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            publish("5 minute load: " + cpuStatistics.get5MinuteLoad() + "\n");
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            publish("15 Minute load: " + cpuStatistics.get15MinuteLoad() + "\n");
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void process(List<String> chunks) {
+            for (String s: chunks)
+                txaCpu.append(s);
+        }
+    }
+
+    private class TcpDumpWorker extends SwingWorker<ArrayList<String>, String> {
+
         ArrayList<String> badips = connection.execSelectAndProcess(OntologyConnection.prefixSNMP +
                 "\n " + OntologyConnection.prefixRDF + "\n" + "SELECT ?x WHERE {?x rdf:type snmp:BadInternetDomain.}");
 
         @Override
-        protected Process doInBackground() throws IOException {
+        protected ArrayList<String> doInBackground() throws IOException, InterruptedException {
             String[] args1 = new String[] {"/bin/bash", "-c", "tcpdump -i wlan1" +" -n"};// -w" + getWorkingDirectory() + "/file.cap"};
             Process proc = new ProcessBuilder(args1).start();
             ArrayList<String> ips = new ArrayList<String>();
@@ -354,10 +599,11 @@ public class ViewIds extends JFrame{
                     //System.out.println(matcher.group().substring(0,matcher.group().length()));
                     String temp = (matcher.group().substring(0, matcher.group().length()));
                     publish("ip: " + temp + "\n");
+                    Thread.sleep(10);
                     //ips.add(temp);
                 }
             }
-            return proc;
+            return ips;
         }
 
         @Override
@@ -368,7 +614,11 @@ public class ViewIds extends JFrame{
                 if (!s.startsWith("192.168.1")){
                     for (String s1 : badips){
                         if(s.equals(s1)){
-                            JOptionPane.showMessageDialog(panel, "detected bad ip connection: " + s);
+                            try {
+                                JOptionPane.showMessageDialog(panel, "Detected bad ip connection in " + systemInformation.getIpAddress() + " : " + s);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 }
@@ -377,8 +627,6 @@ public class ViewIds extends JFrame{
 
         @Override
         protected void done() {
-
-
         }
 
     }
