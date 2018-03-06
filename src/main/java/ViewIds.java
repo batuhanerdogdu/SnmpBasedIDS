@@ -1,6 +1,7 @@
 import com.sun.xml.internal.bind.v2.TODO;
 import org.apache.jena.riot.lang.SinkTriplesToGraph;
 
+import javax.naming.OperationNotSupportedException;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
@@ -75,13 +76,14 @@ public class ViewIds extends JFrame{
         //for each ip address, reload the page and show info of that ip address
         //for now only ip is 127.0.0.1
         connection = new OntologyConnection();
-        String[] args = new String[] {"/bin/bash", "-c", connection.getWorkingDirectory() +"./fuseki.sh"};
+        /*String[] args = new String[] {"/bin/bash", "-c", connection.getWorkingDirectory() +"./fuseki.sh"};
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        final Process[] proc = {new ProcessBuilder(args).start()};
+        Process[] proc = {new ProcessBuilder(args).start()};
+        */
         systemInformation = new SystemInformation("127.0.0.1");
 
 
@@ -165,7 +167,7 @@ public class ViewIds extends JFrame{
 
         txaDetected = new JTextArea(20,30);
         txaDetected.setEditable(false);
-        txaDetected.setBackground(Color.red);
+        txaDetected.setBackground(Color.ORANGE);
         scpDetected = new JScrollPane(txaDetected);
         scpDetected.setBorder(border);
         cs.gridx = 3;
@@ -248,16 +250,11 @@ public class ViewIds extends JFrame{
         cs.gridwidth = 1;
         panel.add(btnStart, cs);
 
-        JProgressBar jpbDisk = new JProgressBar();
-        panel.add(jpbDisk);
-
         frame.add(panel);
-
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         //txaConnections
 
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         panel.setBorder(new LineBorder(Color.GRAY));
         getContentPane().add(panel, BorderLayout.CENTER);
         pack();
@@ -272,10 +269,14 @@ public class ViewIds extends JFrame{
         processWorker.execute();
         final CpuWorker cpuWorker = new CpuWorker();
         cpuWorker.execute();
-        final DetectionWorker detectionWorker = new DetectionWorker();
-        detectionWorker.execute();
         final MalwareWorker malwareWorker = new MalwareWorker();
         malwareWorker.execute();
+        connection.uploadRDF(new File(connection.getWorkingDirectory()+"/snmpids.owl"),
+                OntologyConnection.serviceURIforData);
+        final DetectionWorker detectionWorker = new DetectionWorker();
+        detectionWorker.execute();
+        //txaDetected.append("No intrusions detected in running processes.");
+
         final TcpDumpWorker tcpDumpWorker = new TcpDumpWorker();
         btnStart.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -326,7 +327,9 @@ public class ViewIds extends JFrame{
                 txaProcess.append(s);
         }
         @Override
-        protected  void done () {}
+        protected  void done () {
+
+        }
     }
 
     private class MemWorker extends SwingWorker<String, String> {
@@ -392,7 +395,7 @@ public class ViewIds extends JFrame{
         @Override
         protected String doInBackground () throws IOException {
             DiskStatistics diskStatistics = new DiskStatistics("127.0.0.1");
-            String temp1 = diskStatistics.getPathWhereDiskIsMounted().get(0);
+            int temp1 = diskStatistics.getTotalSizeOfTheDiskOrPartition().get(0);
             publish("Total disk size: " + temp1 + "\n");
             try {
                 Thread.sleep(10);
@@ -484,24 +487,24 @@ public class ViewIds extends JFrame{
 
     private class MalwareWorker extends SwingWorker<String, String> {
 
-        HTMLparser htmLparser = new HTMLparser();
+        //HTMLparser htmLparser = new HTMLparser();
 
         private MalwareWorker() throws IOException {
         }
 
         @Override
         protected String doInBackground () throws IOException {
-            ArrayList<Malware> malwares = htmLparser.getHMTLcontentOfSymantecCom();
-
-            for (Malware m : malwares) {
-                publish("name: " + m.getName() + "\n");
+            ArrayList<String> results = connection.execSelectAndProcess(OntologyConnection.prefixSNMP + " " + OntologyConnection.prefixRDF + " \n" +
+            "SELECT ?x WHERE {?x rdf:type snmp:Malware.}");
+            //ArrayList<Malware> malwares = htmLparser.getHMTLcontentOfSymantecCom();
+            for (String s: results) {
+                publish("name: " + s + "\n");
                 try {
                     Thread.sleep(10);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
-
             return null;
         }
         @Override
@@ -542,7 +545,7 @@ public class ViewIds extends JFrame{
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            publish("Raw user CPU: " + cpuStatistics.getRawUserCPUtime());
+            publish("Raw user CPU: " + cpuStatistics.getRawUserCPUtime() + "\n");
             try {
                 Thread.sleep(10);
             } catch (InterruptedException e) {
@@ -566,6 +569,7 @@ public class ViewIds extends JFrame{
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+
             return null;
         }
 
@@ -573,6 +577,8 @@ public class ViewIds extends JFrame{
         protected void process(List<String> chunks) {
             for (String s: chunks)
                 txaCpu.append(s);
+
+
         }
     }
 

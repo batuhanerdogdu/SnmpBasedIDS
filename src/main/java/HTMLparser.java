@@ -24,7 +24,7 @@ public class HTMLparser  {
     public ArrayList<BadDomain> getHTMLcontentOfMalwareDomainListCom() throws IOException {
         String url = "https://www.malwaredomainlist.com/mdl.php";
         ArrayList<BadDomain> badDomains = new ArrayList<BadDomain>();
-        Document document = Jsoup.connect(url).timeout(15000).get();
+        Document document = Jsoup.connect(url).timeout(0).get();
         /*try {//website responses late so we make the program wait...
             Thread.sleep(5000);
         } catch (InterruptedException e) {
@@ -167,6 +167,7 @@ public class HTMLparser  {
         for (BadDomain bd  :mdlcom) {
             badDomains.add(bd);
         }
+        System.out.println("Bad IP website parsed.");
         return badDomains;
     }
 
@@ -191,61 +192,150 @@ public class HTMLparser  {
         String rawUrl = "https://www.symantec.com/security-center/a-z/";
         ArrayList<Malware> malwares = new ArrayList<Malware>();
         ArrayList<String> urls = new ArrayList<String>();
-        for (char s = 'A'; s<= 'Z'; s++){
+        ArrayList<String> prefixes = new ArrayList<String>();
+        prefixes.add("Android.");
+        prefixes.add("Adware.");
+        prefixes.add("Backdoor.");
+        prefixes.add("Downloader.");
+        prefixes.add("Exp.");
+        prefixes.add("Hacktool.");
+        //prefixes.add("Linux.");
+        //prefixes.add("OSX.");
+        prefixes.add("Ransom.");
+        //prefixes.add("SONAR.");
+        prefixes.add("Trojan.");
+        //prefixes.add("Unix.");
+        //prefixes.add("W32.");
+        //prefixes.add("W97M.");
+        //prefixes.add("W64.");
+        prefixes.add("Worm.");
+
+        ArrayList<String> characters = new ArrayList<String>();
+        characters.add("{"); // | '}' | '|' | '\' | '^' | '[' | ']' | '`'
+        characters.add("}");
+        characters.add("|");
+        characters.add("\\");
+        characters.add("^");
+        characters.add("[");
+        characters.add("]");
+        characters.add("`");
+        characters.add(";");
+        characters.add("$");
+        characters.add("?");
+        characters.add(":");
+        characters.add("@");
+        characters.add(",");
+        characters.add("=");
+        characters.add("&");
+        characters.add("+");
+        characters.add("<");
+        characters.add(">");
+        characters.add("#");
+        characters.add("%");
+
+        for (char s = 'A'; s <= 'Z'; s++){
             urls.add(rawUrl+s);
             System.out.println(rawUrl+s);
         }
         urls.add(rawUrl+"_1234567890");
+        //for each url we parse the website
         for (String url : urls) {
             Document document = Jsoup.connect(url).timeout(10*10000).get();
             Elements elements = document.getElementsByTag("tbody"); //PARSING NEEDS MORE WORK
             Elements rows =  elements.select("tr");
             System.out.println("Parsing: " + url);
-            //rows.remove(0); //remove the table header row
-
+            //this is for malwares in the table
             for (Element row : rows){
                 Elements columns = row.getElementsByTag("td");
                 ArrayList<String> temp = new ArrayList<String>();
                 for (Element column : columns) {
                     //System.out.println("-" + column);
-                    String regexPattern = "\\S+";
-                    Pattern pattern = Pattern.compile(regexPattern);
-                    Matcher matcher = pattern.matcher(column.text());
-                    while (matcher.find()) {
-                        //System.out.println(matcher.group().substring(0,matcher.group().length()));
-                        temp.add((matcher.group().substring(0, matcher.group().length()))); // remove known words like worm, android, adware etc...
-                    }
+                    temp.add(column.text().trim().replace(' ', '_'));
                 }
                 if (temp.size()==1){
                     Malware m = new Malware();
-                    m.setName(temp.get(0));
+                    String temp1 = temp.get(0);
+                    for(String pre : prefixes){
+                        if(temp1.startsWith(pre))
+                            temp1 = temp.get(0).replace(pre, "");
+                    }// remove known words like worm, android, adware etc...
+
+                    for (String c : characters){
+                        if(temp1.contains(c)){
+                            temp1 = temp1.replace(c.toCharArray()[0], '_');
+                        }
+                    }
+                    m.setName(temp1.toLowerCase());
                     m.setType("Other");
                     m.setDiscoveryDate("Unknown");
                     malwares.add(m);
                 }else if (temp.size()==2){
                     Malware m = new Malware();
-                    m.setName(temp.get(0));
+                    String temp1 = temp.get(0);
+                    for(String pre : prefixes){
+                        if(temp1.startsWith(pre))
+                            temp1 = temp.get(0).replace(pre, "");
+                    }// remove known words like worm, android, adware etc...
+                    for (String c : characters){
+                        if(temp1.contains(c)){
+                            temp1 = temp1.replace(c.toCharArray()[0], '_');
+                        }
+                    }
+                    m.setName(temp1.toLowerCase());
                     m.setType(temp.get(1));
                     m.setDiscoveryDate("Unknown");
                     malwares.add(m);
                 }else if (temp.size()==3){
                     Malware m = new Malware();
-                    m.setName(temp.get(0));
+                    String temp1 = temp.get(0);
+                    for(String pre : prefixes){
+                        if(temp1.startsWith(pre))
+                            temp1 = temp.get(0).replace(pre, "");
+                    }// remove known words like worm, android, adware etc...
+                    for (String c : characters){
+                        if(temp1.contains(c)){
+                            temp1 = temp1.replace(c.toCharArray()[0], '_');
+                        }
+                    }
+                    m.setName(temp1.toLowerCase());
                     m.setType(temp.get(1));
                     m.setDiscoveryDate(temp.get(2));
                     malwares.add(m);
-                }else if (temp.size()>3){
-                    for (String t : temp){
-                        Malware m = new Malware();
-                        m.setName(t);
-                        m.setType("Other");
-                        m.setDiscoveryDate("Unknown");
-                        malwares.add(m);
+                }
+            }
+
+            Elements list = document.getElementsByTag("pre");
+            String regexPattern = ".+(?<!\\n)|.+(?>=\\n)|(?<=\\n).+";
+            Pattern pattern = Pattern.compile(regexPattern);
+            //System.out.println(list.text());
+            Matcher matcher = pattern.matcher(list.text());
+
+            //this is for malwares under <pre> tag
+            while (matcher.find()) {
+                //System.out.println(matcher.group().substring(0,matcher.group().length()));
+                Malware m = new Malware();
+                String temp = matcher.group().substring(0, matcher.group().length()).trim().replace(' ', '_');
+                String temp1 = temp;
+                for (String pre : prefixes){
+                    if (temp.startsWith(pre)){
+                        temp1 = temp.replace(pre, "");
+                    }
+                }// remove known words like worm, android, adware etc...
+
+                for (String c : characters){
+                    if(temp1.contains(c)){
+                        temp1 = temp1.replace(c.toCharArray()[0], '_');
                     }
                 }
-
+                m.setName(temp1.toLowerCase());
+                m.setType("Other");
+                m.setDiscoveryDate("Unknown");
+                malwares.add(m);
             }
+
         }
+
+
 
         /*for (Element l : latest) {
             System.out.println(latest.text() + "\n");

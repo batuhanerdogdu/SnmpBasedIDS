@@ -49,10 +49,11 @@ public class OntologyConnection {
 
         HTMLparser htmLparser = new HTMLparser();
         ArrayList<Malware> malwares = htmLparser.getHMTLcontentOfSymantecCom();
-        ArrayList<BadDomain> badDomains = htmLparser.getAllBadDomains();
+        //ArrayList<BadDomain> badDomains = htmLparser.getHTMLcontentOfBadIpCom();
 
         OntClass malware = model.getOntClass(nameSpace + "Malware");
         OntClass badInternetDomain = model.getOntClass(nameSpace + "BadInternetDomain");
+        OntClass snmpv3Profile = model.getOntClass(nameSpace + "v3Profile");
         OntProperty type = model.getOntProperty(nameSpace + "type");
         OntProperty discoveryDate = model.getOntProperty(nameSpace + "discoveryDate");
         OntProperty asn = model.getOntProperty(nameSpace + "asn");
@@ -60,6 +61,24 @@ public class OntologyConnection {
         OntProperty description = model.getOntProperty(nameSpace + "description");
         OntProperty domainName = model.getOntProperty(nameSpace + "domainName");
         OntProperty reverseLookupAddress = model.getOntProperty(nameSpace + "reverseLookupAddress");
+        OntProperty authenticationPassphrase = model.getOntProperty(nameSpace + "authenticationPassphrase");
+        OntProperty authenticationType = model.getOntProperty(nameSpace + "authenticationType");
+        OntProperty encryptionPassphrase = model.getOntProperty(nameSpace + "encryptionPassphrase");
+        OntProperty encryptionType = model.getOntProperty(nameSpace + "encryptionType");
+        OntProperty securityName = model.getOntProperty(nameSpace + "securityName");
+        OntProperty securityLevel = model.getOntProperty(nameSpace + "securityLevel");
+
+        modelToWrite = new FileOutputStream(inputFileName);
+        Individual ind = model.createIndividual(nameSpace + "BatuhanSystem", snmpv3Profile);
+        ind.addProperty(authenticationPassphrase, "access123");
+        ind.addProperty(authenticationType, "SHA");
+        ind.addProperty(encryptionPassphrase, "access123");
+        ind.addProperty(encryptionType, "DES");
+        ind.addProperty(securityLevel, "authPriv");
+        ind.addProperty(securityName, "batuhan");
+        model.write(modelToWrite, "RDF/XML");
+
+
 
         for (Malware m : malwares){
             modelToWrite = new FileOutputStream(inputFileName);
@@ -69,7 +88,7 @@ public class OntologyConnection {
             model.write(modelToWrite, "RDF/XML");
         }
 
-        for (BadDomain bd : badDomains) {
+        /*for (BadDomain bd : badDomains) {
             modelToWrite = new FileOutputStream(inputFileName);
             Individual individual = model.createIndividual(nameSpace + bd.getIpAddress(), badInternetDomain);
             individual.addProperty(discoveryDate, bd.getDateOfDiscovery());
@@ -85,7 +104,7 @@ public class OntologyConnection {
         modelToWrite.flush();*/
     }
 
-    public static void uploadRDF(File rdf , String URI)
+    public void uploadRDF(File rdf , String URI)
             throws IOException {
 
         // parse the file
@@ -237,7 +256,7 @@ public class OntologyConnection {
         //ArrayList<String> processDirs = ps.getProcessRunDirectories();
 
 
-        uploadRDF(new File(oc.getWorkingDirectory()+"/snmpids.owl"),
+        oc.uploadRDF(new File(oc.getWorkingDirectory()+"/snmpids.owl"),
                 serviceURIforData);
         ArrayList<String> n = new ArrayList<String>();
         n.add("2.2.2.2");
